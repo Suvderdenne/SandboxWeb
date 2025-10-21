@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <title>Бидний тухай</title>
+</head>
+<body>
+  <h1>Бидний тухай хуудас ажиллаж байна!</h1>
+
+  {% if about %}
+    <h2>{{ about.title }}</h2>
+    <p>{{ about.description }}</p>
+    {% if about.image %}
+      <img src="{{ about.image.url }}" alt="{{ about.title }}" width="400">
+    {% endif %}
+  {% else %}
+    <p>Өгөгдөл олдсонгүй (админ хэсгээс About нэмээрэй)</p>
+  {% endif %}
+</body>
+</html>

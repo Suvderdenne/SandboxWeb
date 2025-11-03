@@ -1,0 +1,114 @@
+  html, body {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", Arial, sans-serif;
+      color: white;
+      background: linear-gradient(180deg, #0b0014, #3c0078, #5f00ff, #ff00aa);
+      background-size: 100% 400%;
+      animation: bgScroll 20s ease-in-out infinite alternate;
+      min-height: 300vh; 
+    }
+
+    @keyframes bgScroll {
+      0% { background-position: top; }
+      100% { background-position: bottom; }
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+      z-index: 10;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 16px;
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: 6px 18px;
+      border-radius: 25px;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      background-color: rgba(255,255,255,0.1);
+      color: #ffb6ff;
+    }
+
+    .hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10%;
+    }
+
+    .hero iframe {
+      width: 50%;
+      height: 80%;
+      border: none;
+      border-radius: 20px;
+    }
+
+    .hero-content {
+      z-index: 5;
+    }
+
+    .hero-content h1 {
+      font-size: 22px;
+      margin: 0;
+      font-weight: 400;
+    }
+
+    .hero-content h2 {
+      font-size: 70px;
+      font-weight: 700;
+      margin: 10px 0 0;
+    }
+
+    .hero-content h3 {
+      font-size: 70px;
+      color: #ff55ff;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .hero-content p {
+      font-size: 22px;
+      margin: 20px 0;
+    }
+
+    .hero-content button {
+      background-color: #b72cff;
+      border: none;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 30px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .hero-content button:hover {
+      background-color: #d96bff;
+    }
+
+    
+    .section
+{
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }

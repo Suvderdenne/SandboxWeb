@@ -1,178 +1,40 @@
-  html, body {
-      margin: 0;
-      padding: 0;
-      font-family: "Poppins", Arial, sans-serif;
-      color: white;
-      background: linear-gradient(180deg, #0b0014, #3c0078, #5f00ff, #ff00aa);
-      background-size: 100% 400%;
-      animation: bgScroll 20s ease-in-out infinite alternate;
-      min-height: 300vh; 
-    }
 
-    @keyframes bgScroll {
-      0% { background-position: top; }
-      100% { background-position: bottom; }
-    }
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAND BOX</title>
+ <link rel="stylesheet" href="Нүүр.css">
+</head>
+<body>
+  <nav>
+    <a>Бидний тухай</a>
+    <a>Төсөлүүд</a>
+    <a>Технологи</a>
+    <a>Захиалга өгөх</a>
+    <a>Холбоо барих</a>
+    <a>Санал хүсэлт</a>
+  </nav>
 
-    nav {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 15px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      position: fixed;
-      width: 100%;
-      top: 0;
-      left: 0;
-      background: rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(8px);
-      z-index: 10;
-    }
+  <section class="hero">
+    <div class="hero-content">
+      <h1>САЙН БАЙНА УУ ?</h1>
+      <h2>SAND</h2>
+      <h3>BOX</h3>
+      <p>ТАНЫ АСУУДЛЫГ<br>ШИЙДНЭ.</p>
+      <button>Бүртгүүлэх</button>
+    </div>
+ <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.77/build/spline-viewer.js"></script>
+<spline-viewer url="https://prod.spline.design/7T0jZyQONzZMozps/scene.splinecode"></spline-viewer>
 
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 15px;
-      font-size: 16px;
-      border: 1px solid rgba(255,255,255,0.4);
-      padding: 6px 18px;
-      border-radius: 25px;
-      transition: 0.3s;
-    }
+  <section class="section">
+    <p>Доош гүйлгэхэд background хөдөлж байна </p>
+  </section>
 
-    nav a:hover {
-      background-color: rgba(255,255,255,0.1);
-      color: #ffb6ff;
-    }
+  <section class="section">
+    <p>Энд илүү мэдээлэл, footer гэх мэт зүйлс орж болно.</p>
+  </section>
 
-    .hero {
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 10%;
-    }
-
-    .hero iframe {
-      width: 50%;
-      height: 80%;
-      border: none;
-      border-radius: 20px;
-    }
-
-    .hero-content {
-      z-index: 5;
-    }
-
-    .hero-content h1 {
-      font-size: 22px;
-      margin: 0;
-      font-weight: 400;
-    }
-
-    .hero-content h2 {
-      font-size: 70px;
-      font-weight: 700;
-      margin: 10px 0 0;
-    }
-
-    .hero-content h3 {
-      font-size: 70px;
-      color: #ff55ff;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .hero-content p {
-      font-size: 22px;
-      margin: 20px 0;
-    }
-
-    .hero-content button {
-      background-color: #b72cff;
-      border: none;
-      color: white;
-      padding: 12px 30px;
-      border-radius: 30px;
-      font-size: 18px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .hero-content button:hover {
-      background-color: #d96bff;
-    }
-
-    
-    .section {
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-    }
-
-@media (max-width: 768px) {
-  
-  nav {
-    flex-direction: column;
-    padding: 10px 0;
-  }
-
-  nav a {
-    display: block;
-    margin: 8px 0;
-    font-size: 14px;
-    padding: 8px 16px;
-  }
-
-
-  .hero {
-    flex-direction: column;      
-    justify-content: center;
-    text-align: center;
-    padding: 0 5%;
-  }
-
-  .hero-content {
-    margin-bottom: 30px;
-  }
-
-  .hero iframe {
-    width: 100%;                  
-    height: 250px;               
-  }
-
-  .hero-content h1 {
-    font-size: 18px;
-  }
-
-  .hero-content h2,
-  .hero-content h3 {
-    font-size: 38px;
-  }
-
-  .hero-content p {
-    font-size: 16px;
-  }
-
-  .hero-content button {
-    font-size: 16px;
-    padding: 10px 25px;
-  }
-  .section {
-    font-size: 22px;
-    padding: 20px;
-    text-align: center;
-  }
-}
-@media (max-width: 480px) {
-  .hero iframe {
-    height: 200px;
-  }
-
-  .hero-content h2,
-  .hero-content h3 {
-    font-size: 30px;
-  }
-}
+</body>
+</html>

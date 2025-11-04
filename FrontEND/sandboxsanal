@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Төслийн шинэ санаа — 3D хуудас</title>
+  <style>
+    /* Basic reset */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{background:linear-gradient(180deg,#4e034a 0%, #a8168d 100%);color:#e6eef8;display:flex;align-items:center;justify-content:center;padding:24px}
+
+    /* Page layout */
+    .container{max-width:1100px;width:100%;display:grid;grid-template-columns:1fr 480px;gap:28px;align-items:center}
+    @media (max-width:980px){.container{grid-template-columns:1fr;}}
+
+    /* Left column: text content */
+    .panel{padding:28px;border-radius:14px;background:linear-gradient(180deg, rgba(24, 1, 13, 0.616), rgba(17, 1, 12, 0.76));backdrop-filter: blur(6px);box-shadow:0 8px 40px rgba(162, 76, 223, 0.6)}
+    h1{font-size:28px;margin-bottom:8px;line-height:1.05}
+    .tag{display:inline-block;background:linear-gradient(90deg,#7c3aed,#0633d4);padding:6px 10px;border-radius:999px;font-weight:600;font-size:13px;color:white;margin-bottom:12px}
+    p.lead{color:rgba(230,238,248,0.85);margin-bottom:18px}
+    ul.features{list-style:none;display:grid;gap:10px;margin-bottom:20px}
+    ul.features li{display:flex;gap:12px;align-items:flex-start}
+    ul.features li .dot{width:12px;height:12px;border-radius:3px;background:linear-gradient(180deg,#a111b4,#06b6d4);margin-top:6px}
+    .btn-row{display:flex;gap:12px}
+    .btn{padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer;border:none}
+    .btn.primary{background:linear-gradient(90deg,#7c3aed,#06b6d4);color:white}
+    .btn.ghost{background:transparent;color:#cfe8ff;border:1px solid rgba(255,255,255,0.06)}
+
+    /* Right column: 3D canvas holder */
+    .stage{width:100%;height:520px;border-radius:14px;overflow:hidden;position:relative;background:linear-gradient(180deg, rgba(33, 3, 21, 0.939), rgba(255,255,255,0.005));display:flex;align-items:center;justify-content:center}
+    @media (max-width:980px){.stage{height:420px}}
+    canvas{display:block}
+
+    /* Overlay info box on the 3D */
+    .card-ui{position:absolute;left:18px;bottom:18px;background:rgba(34, 68, 221, 0.723);padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(6px)}
+    .small{font-size:13px;color:#cfe8ff}
+
+    /* Footer small note */
+    .credit{margin-top:14px;font-size:12px;color:rgba(230,238,248,0.6)}
+
+    /* Fancy focus outline for accessibility */
+    .btn:focus{outline:3px solid rgba(99,102,241,0.18)}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="panel">
+      <span class="tag">Шинэ санаа</span>
+      <h1>"sand box club" — Богино танилцуулга</h1>
+      <p class="lead">Манай клубын шинэ санаа</p>
+
+      <ul class="features">
+        <li><div class="dot"></div><div><strong>Үндсэн хөрөгө оруулалт</strong><div class="small">Бизнес модель болон ашигтай талууд</div></div></li>
+        <li><div class="dot"></div><div><strong>Түлхүүр онцлог</strong><div class="small">Ашиглагчид ямар давуу талыг хүлээн авна</div></div></li>
+        <li><div class="dot"></div><div><strong>Зорилтот зах зээл</strong><div class="small">Хэн хэрэглэнэ, ямар хэрэгцээг хангана</div></div></li>
+      </ul>
+
+      <div class="btn-row">
+        <button class="btn primary" id="cta-primary">Дэлгэрэнгүй үзэх</button>
+        <button class="btn ghost" id="cta-secondary">PDF татах</button>
+      </div>
+
+      <div class="credit">бидний тухай</div>
+    </div>
+
+    <div class="stage" id="stage">
+      <!-- Three.js canvas will be injected here -->
+      <div class="card-ui">
+        <div class="small">Куб дээр дарж мэдээлэл харах — + түүний эргэлтийг гулгуулж тохируулах боломжтой.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three.js from CDN -->
+  <script src="https://unpkg.com/three@0.159.0/build/three.min.js"></script>
+  <script>
+    /* ====== CONFIGURE THESE TEXTS FOR YOUR PROJECT ====== */
+    const faceTexts = [
+      {title:'Төсөл', lines:['Нэр: Төсөл X','Багахан тайлбар']},
+      {title:'Проблем', lines:['Оронд нь ямар асуудал','Хэрэглэгчийн өвөрмөц хэрэгцээ']},
+      {title:'Шийдэл', lines:['Манай бүтээгдэхүүн','Онцлог, давуу тал']},
+      {title:'Зах зээл', lines:['Зорилтот хэрэглэгч','Стратеги']},
+      {title:'Бизнес', lines:['Оролт/гаралт','Орлогын хялбар загвар']},
+      {title:'Холбоо', lines:['И-мэйл: you@domain','Вэб: yoursite.mn']}
+    ];
+
+    /* ====== THREE.JS SCENE SETUP ====== */
+    const stage = document.getElementById('stage');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(35, stage.clientWidth / stage.clientHeight, 0.1, 1000);
+    camera.position.set(0,0,5.2);
+
+    const renderer = new THREE.WebGLRenderer({antialias:true,alpha:true});
+    renderer.setSize(stage.clientWidth, stage.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    stage.appendChild(renderer.domElement);
+
+    // Lights
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.9);
+    scene.add(hemi);
+    const dir = new THREE.DirectionalLight(0xffffff, 0.6);
+    dir.position.set(5,5,5);
+    scene.add(dir);
+
+    // Create textures from canvas for each face
+    function makeFaceTexture(obj){
+      const size = 512;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      // background
+      const g = ctx.createLinearGradient(0,0,size,size);
+      g.addColorStop(0,'#0f172a'); g.addColorStop(1,'#071023');
+      ctx.fillStyle = g; ctx.fillRect(0,0,size,size);
+
+      // title
+      ctx.fillStyle = '#e6eef8'; ctx.font = 'bold 34px sans-serif';
+      ctx.textAlign = 'center'; ctx.fillText(obj.title, size/2, 80);
+
+      // lines
+      ctx.font = '16px sans-serif'; ctx.fillStyle = 'rgba(230,238,248,0.9)';
+      const startY = 140; const lineH = 26;
+      for(let i=0;i<obj.lines.length;i++){
+        ctx.fillText('- ' + obj.lines[i], size/2, startY + i*lineH);
+      }
+
+      // subtle border
+      ctx.strokeStyle = 'rgba(255,255,255,0.03)'; ctx.lineWidth=6; ctx.strokeRect(0,0,size,size);
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.needsUpdate = true; return tex;
+    }
+
+    const materials = faceTexts.map(t=>new THREE.MeshStandardMaterial({map:makeFaceTexture(t)}));
+    const geo = new THREE.BoxGeometry(2.2,2.2,2.2);
+    const cube = new THREE.Mesh(geo, materials);
+    cube.rotation.y = 0.4; cube.rotation.x = -0.18;
+    scene.add(cube);
+
+    // subtle floating animation
+    const clock = new THREE.Clock();
+
+    // Raycaster for click interaction
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    function onPointerMove(e){
+      const r = stage.getBoundingClientRect();
+      mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+      mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+    }
+    stage.addEventListener('pointermove', onPointerMove);
+
+    function onClick(e){
+      const r = stage.getBoundingClientRect();
+      mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+      mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(cube);
+      if(intersects.length){
+        const faceIndex = Math.floor(intersects[0].face.materialIndex);
+        // Show a small modal - we will use native alert for simplicity
+        const info = faceTexts[faceIndex];
+        alert(info.title + "\n\n" + info.lines.join('\n'));
+      }
+    }
+    stage.addEventListener('click', onClick);
+
+    // drag to rotate
+    let dragging=false, lastX=0;
+    stage.addEventListener('pointerdown', (e)=>{dragging=true; lastX=e.clientX; stage.style.cursor='grabbing'});
+    window.addEventListener('pointerup', ()=>{dragging=false; stage.style.cursor='auto'});
+    window.addEventListener('pointermove', (e)=>{ if(dragging){ const dx = (e.clientX - lastX); cube.rotation.y += dx * 0.005; lastX = e.clientX }});
+
+    // Responsive
+    window.addEventListener('resize', ()=>{
+      renderer.setSize(stage.clientWidth, stage.clientHeight);
+      camera.aspect = stage.clientWidth / stage.clientHeight;
+      camera.updateProjectionMatrix();
+    });
+
+    // Render loop
+    function animate(){
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+      cube.position.y = Math.sin(t*0.7)*0.08; // float
+      cube.rotation.x += 0.002;
+      // slight follow of mouse
+      raycaster.setFromCamera(mouse, camera);
+      // render
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // CTA buttons
+    document.getElementById('cta-primary').addEventListener('click', ()=>{
+      // rotate to a face (example: 'Шийдэл' face index 2)
+      const targetIndex = 2;
+      // compute rotation target so that that face faces camera
+      const angle = -targetIndex * (Math.PI/2);
+      // simple tween
+      const start = cube.rotation.y; const end = angle; const dur = 600; const t0 = performance.now();
+      function tween(){
+        const now = performance.now(); const p = Math.min(1,(now-t0)/dur);
+        cube.rotation.y = start + (end-start)*(-Math.cos(Math.PI*p)/2 + 0.5);
+        if(p<1) requestAnimationFrame(tween);
+      }
+      tween();
+    });
+
+    document.getElementById('cta-secondary').addEventListener('click', ()=>{
+      // Example: generate a simple text-based PDF-like download using a blob (very basic)
+      const txt = ['Төсөл — Богино тайлбар','\n'];
+      faceTexts.forEach(f=>{ txt.push(f.title); f.lines.forEach(l=>txt.push('  - '+l)); txt.push('\n'); });
+      const blob = new Blob([txt.join('\n')], {type:'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'project-summary.txt'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    // If WebGL not available, show fallback
+    if(!renderer.capabilities.isWebGL2 && !renderer.getContext){
+      stage.innerHTML = '<div style="padding:24px;color:#cfe8ff">Таны хөтчид WebGL дэмжигддэггүй тул 3D агууламж харагдахгүй. Зориулалтын CSS 3D хувилбар ашиглана уу.</div>';
+    }
+
+  </script>
+</body>
+</html>

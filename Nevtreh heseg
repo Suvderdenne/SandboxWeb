@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Нэвтрэх / Бүртгүүлэх — Spline 3D Background</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      display:flex;align-items:center;justify-content:center;
+      background:#0b0b0b; 
+      height:100vh;overflow:hidden;
+    }
+    .bg-3d{
+      position:fixed;inset:0;z-index:0;pointer-events:none;display:block;overflow:hidden;
+      background: linear-gradient(120deg,#ff2d95 0%, rgba(255,138,203,0.12) 50%, white 110%);
+      display:flex;align-items:center;justify-content:center;
+    }
+
+    .bg-3d iframe{
+      position:absolute;inset:-10%;width:120%;height:120%;border:0;transform:translateZ(0);filter:contrast(1.05) saturate(1.05);
+    }
+
+    .card{
+      z-index:2;position:relative;max-width:980px;width:92%;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border-radius:14px;backdrop-filter: blur(6px) saturate(120%);box-shadow:0 10px 30px rgba(0,0,0,0.6);
+      overflow:hidden;display:flex;min-height:520px;
+    }
+
+    .form-panel{width:50%;padding:48px 48px;display:flex;flex-direction:column;justify-content:center;gap:18px}
+    .brand{color:#fff;font-weight:700;font-size:20px;letter-spacing:0.6px}
+    h1{color:#fff;font-size:28px;margin-bottom:6px}
+    p.lead{color:rgba(255,255,255,0.85);font-size:14px}
+
+    label{color:rgba(255,255,255,0.9);font-size:13px;margin-bottom:6px}
+    input[type="text"], input[type="email"], input[type="password"]{
+      width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);
+      background:white;color:#fff;outline:none;font-size:14px
+    }
+
+    .btn{display:inline-block;padding:12px 20px;border-radius:999px;border:none;cursor:pointer;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+    .btn-primary{background:linear-gradient(90deg,#ff2d95,#ff8acb);color:#0b0b0b;border:1px solid rgba(255,255,255,0.06)}
+    .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.12)}
+
+    .muted{color:rgba(255,255,255,0.7);font-size:13px}
+    .form-row{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+    .actions{display:flex;gap:12px;align-items:center;margin-top:8px}
+
+    @media (max-width:900px){
+      .card{flex-direction:column;min-height:760px}
+      .form-panel{width:100%;padding:28px}
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-3d" aria-hidden="true">
+    <iframe id="spline-embed" src="https://my.spline.design/your-scene-id/" allow="fullscreen; gyroscope; accelerometer; autoplay" title="Spline 3D background"></iframe>
+  </div> 
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.78/build/spline-viewer.js"></script>
+<spline-viewer url="https://prod.spline.design/b1Ya5dnMQwTITU6D/scene.splinecode"></spline-viewer>
+
+  <div class="overlay-gradient" aria-hidden="true"></div>
+
+  <div class="card" role="main">
+    <div class="form-panel" id="sign-in-panel">
+      <div class="brand">Танай Сайт</div>
+      <h1>Нэвтрэх</h1>
+      <p class="lead">Имэйл болон нууц үгээр нэвтэрнэ үү</p>
+
+      <form id="signin-form" onsubmit="event.preventDefault();alert('Нэвтэрлээ (пример)')">
+        <div class="form-row"><label for="si-email">Имэйл</label><input id="si-email" type="email" required placeholder="tanii@mail.mn"></div>
+        <div class="form-row"><label for="si-pass">Нууц үг</label><input id="si-pass" type="password" required placeholder="••••••••"></div>
+        <div class="actions">
+          <button class="btn btn-primary" type="submit">Нэвтрэх</button>
+          <button class="btn btn-ghost" type="button" id="to-signup">Бүртгүүлэх</button>
+        </div>
+      </form>
+
+      <p class="muted">Нууц үгээ мартсан бол <a href="#" style="color:#ff8acb">энд</a> дарна уу</p>
+    </div>
+
+    <div class="form-panel" id="sign-up-panel" style="border-left:1px solid rgba(255,255,255,0.03)">
+      <div class="brand">Танай Сайт</div>
+      <h1>Бүртгүүлэх</h1>
+      <p class="lead">Шинэ акаунт үүсгэнэ үү</p>
+
+      <form id="signup-form" onsubmit="event.preventDefault();alert('Бүртгүүллээ (пример)')">
+        <div class="form-row"><label for="su-name">Нэр</label><input id="su-name" type="text" required placeholder="Овог Нэр"></div>
+        <div class="form-row"><label for="su-email">Имэйл</label><input id="su-email" type="email" required placeholder="tanii@mail.mn"></div>
+        <div class="form-row"><label for="su-pass">Нууц үг</label><input id="su-pass" type="password" required placeholder="••••••••"></div>
+        <div class="actions">
+          <button class="btn btn-primary" type="submit">Бүртгүүлэх</button>
+          <button class="btn btn-ghost" type="button" id="to-signin">Нэвтрэх</button>
+        </div>
+      </form>
+
+      <p class="muted small">Бүртгүүлэх товч дарснаар та ашиглалтын нөхцлийг хүлээн зөвшөөрнө.</p>
+    </div> 
+
+  </div>
+
+  <script>
+    const signInPanel = document.getElementById('sign-in-panel');
+    const signUpPanel = document.getElementById('sign-up-panel');
+    const toSignup = document.getElementById('to-signup');
+    const toSignin = document.getElementById('to-signin');
+
+    function showSignInView(){ signInPanel.style.display = 'flex'; signUpPanel.style.display = 'none'; }
+    function showSignUpView(){ signInPanel.style.display = 'none'; signUpPanel.style.display = 'flex'; }
+
+    if(window.innerWidth<=900){ signInPanel.style.display='flex'; signUpPanel.style.display='flex'; } else { signUpPanel.style.display='none'; signInPanel.style.display='flex'; }
+
+    toSignup.addEventListener('click', showSignUpView);
+    toSignin.addEventListener('click', showSignInView);
+    function setSplineScene(sceneIdentifier){
+      const iframe = document.getElementById('spline-embed');
+      if(!iframe) return;
+      if(sceneIdentifier.startsWith('http')) iframe.src = sceneIdentifier;
+      else iframe.src = `https://my.spline.design/${sceneIdentifier}/`;
+    }
+  </script>
+</body>
+</html>

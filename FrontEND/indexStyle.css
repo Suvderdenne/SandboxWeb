@@ -39,6 +39,19 @@
       border-radius: 25px;
       transition: 0.3s;
     }
+    a{color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 16px;
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: 6px 18px;
+      border-radius: 25px;
+      transition: 0.3s;}
+      a:hover{
+         background-color: rgba(255,255,255,0.1);
+      color: #ffb6ff;
+
+      }
 
     nav a:hover {
       background-color: rgba(255,255,255,0.1);

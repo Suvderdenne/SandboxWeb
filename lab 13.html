@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sandbox Timeline</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body{
+      font-family: Arial, sans-serif;
+      background: #0f001f;
+      padding: 40px;
+      color: #ffccff;
+    }
+
+    h1{
+      text-align:center;
+      margin-bottom:24px;
+      color:#ff00ff;
+      text-shadow:0 0 12px #ff00ff;
+      font-size:32px;
+    }
+
+    .timeline {
+      position: relative;
+      margin: 0 auto;
+      max-width: 800px;
+      padding: 20px 0;
+    }
+
+    /* center vertical neon line */
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 100%;
+      background: #ff00ff;
+      box-shadow: 0 0 12px #ff00ff;
+    }
+
+    .entry {
+      position: relative;
+      width: 50%;
+      padding: 20px 30px;
+    }
+
+    .entry.left  { left: 0; text-align: right; }
+    .entry.right { left: 50%; text-align: left; }
+
+    /* the neon circle on the line */
+    .entry::after {
+      content: "";
+      position: absolute;
+      top: 28px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #0f001f;
+      border: 4px solid #ff00ff;
+      box-shadow: 0 0 10px #ff00ff, 0 0 14px #cc00cc;
+    }
+
+    .entry.left::after  { right: -8px; }
+    .entry.right::after { left: -8px; }
+
+    .card {
+      background: #1a001a;
+      padding: 14px 20px;
+      border-radius: 12px;
+      display: block;
+      max-width: 90%;
+      box-shadow: 0 0 20px #440044;
+      border: 1px solid #ff33ff44;
+      transition: 0.25s;
+
+      /* Энэ хэсэг нь урт текстийг шинэ мөрт шилжүүлнэ */
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .card:hover {
+      box-shadow: 0 0 25px #ff00ff, 0 0 35px #ff33ff;
+      transform: scale(1.03);
+    }
+
+    .date {
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      color: #ff66ff;
+      text-shadow:0 0 6px #ff00ff;
+    }
+
+    .title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #ff99ff;
+    }
+
+    .desc {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      color: #ffccff;
+    }
+    @media (max-width: 700px) {
+      .timeline::before { left: 10px; }
+      .entry { width: 100%; padding-left: 40px; padding-right: 10px; }
+      .entry.left, .entry.right { left: 0; text-align: left; }
+      .entry::after { left: 0; top: 28px; right: auto; }
+      .card { max-width: calc(100% - 50px); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Sandbox Timeline</h1>
+
+  <div class="timeline">
+
+    <div class="entry left">
+      <div class="card">
+        <div class="date">2025-11-01</div>
+        <div class="title">Үүсгэн байгуулсан</div>
+        <div class="desc">turshilt shuuuuuuuuuuuubjsbfjbfjbfjbafbafbalkb</div>
+      </div>
+    </div>
+
+    <div class="entry right">
+      <div class="card">
+        <div class="date">2025-11-10</div>
+        <div class="title">Би</div>
+        <div class="desc">sngt;jsng;jngldngljsngjsngjsngjndsgjnsjgnsjkgnjssgsgs</div>
+      </div>
+    </div>
+
+    <div class="entry left">
+      <div class="card">
+        <div class="date">2025-11-20</div>
+        <div class="title">Сайн</div>
+        <div class="desc">hsdjghsljghdjlghljdghsjlghljdhsgljsdhgljdhsljghsdjlghdsljghsldg.</div>
+      </div>
+    </div>
+    <div class="entry right">
+      <div class="card">
+        <div class="date">2025-11-10</div>
+        <div class="title">Би</div>
+        <div class="desc">sngt;jsng;jngldngljsngjsngjsngjndsgjnsjgnsjkgnjssgsgs</div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

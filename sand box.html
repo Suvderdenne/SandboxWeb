@@ -3,49 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <title>Sandbox - Холбоо барих</title>
-    <link rel="stylesheet" href="bruh.css" />
+    <link rel="stylesheet" href="tailtsuulag.css" />
     <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.78/build/spline-viewer.js"></script>
     <style>
-        html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-}
-
-body {
-    display: flex;
-    height: 100%;
-    background-color: #000;
-    color: #ff99ff;
-    font-family: Arial, sans-serif;
-}
-
-#left {
-    flex: 1;
-    padding: 40px;
-    box-sizing: border-box;
-    overflow-y: auto;
-}
-
-#right {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-spline-viewer {
-    width: 100%;
-    height: 100vh;
-    max-width: 600px;
-}
-.about-image {
-            display: block;
-            margin: 20px auto 0 auto;
-            width: 90%;
-            height: 300px;
-        }
         * {
             box-sizing: border-box;
             margin: 0;
@@ -82,23 +42,28 @@ spline-viewer {
             font-size: 36px;
             color: #ff00ff;
         }
-
         #about {
             flex-grow: 1;
             text-align: center;
             margin-top: 40px;
         }
 
-        #about h2 {
-            color: #ff66ff;
-            margin-bottom: 15px;
+        #aboutBtn {
+            padding: 15px 35px;
+            font-size: 22px;
+            color: #ffccff;
+            background-color: #330033;
+            border: 2px solid #ff00ff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 15px #ff00ff;
         }
 
-        #about p {
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-            color: #ffccff;
+        #aboutBtn:hover {
+            background-color: #660066;
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #ff00ff, 0 0 20px #ff33ff;
         }
 
         footer {
@@ -108,7 +73,7 @@ spline-viewer {
             font-size: 16px;
             color: #ffccff;
             box-shadow: 0 -2px 10px #ff00ff;
-            margin-top: 10px;
+            margin-top: 40px;
         }
 
         footer h2 {
@@ -134,12 +99,10 @@ spline-viewer {
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.5s ease, box-shadow 0.5s ease;
+            transition: 0.5s;
         }
 
-        #copyButton:hover,
-        #copyButton:focus,
-        #copyButton:active {
+        #copyButton:hover {
             background: linear-gradient(270deg, #ff00ff, #00ffff, #ff00ff);
             background-size: 600% 600%;
             animation: rgbShift 5s ease infinite;
@@ -167,7 +130,6 @@ spline-viewer {
             box-shadow: 0 0 30px #ff00ff;
         }
 
-        /* Responsive for smaller screens */
         @media (max-width: 768px) {
             html, body {
                 flex-direction: column;
@@ -193,24 +155,15 @@ spline-viewer {
         <header>
             <h1>Sandbox</h1>
         </header>
-
         <section id="about">
-            <h2>Бидний тухай</h2>
-            <p>
-                Энд Sandbox клубийн талаар дэлгэрэнгүй мэдээлэл бичнэ үү. Бид таны хүсэл сонирхолд нийцсэн 3D загвар болон бусад мэдээллийг танд хүргэнэ.
-            </p>
-            <figure>
-                <img class="about-image" src="../zuragnuud/6159605.png" alt="Sandbox клубийн танилцуулга зураг (6159605)" />
-                <!-- Хэрэв хүсвэл тайлбар бичиж болно -->
-                <!-- <figcaption style="color:#ffccff; margin-top:8px;">Sandbox клубийн танилцуулгын зураг</figcaption> -->
-            </figure>
+            <button id="aboutBtn">Бидний тухай</button>
         </section>
 
         <footer>
             <h2>Холбоо барих</h2>
             <p>И-мэйл: <a id="emailAddress" href="mailto:sandbox.team.mn@gmail.com">sandbox.team.mn@gmail.com</a></p>
             <p>Утас: <a id="phoneNumber" href="tel:+97612345678">+976 12345678</a></p>
-            <button id="copyButton" title="Утасны дугаарыг хуулна">Утасны дугаарыг залгах</button>
+            <button id="copyButton">Утасны дугаарыг залгах</button>
         </footer>
     </div>
 
@@ -219,6 +172,9 @@ spline-viewer {
     </div>
 
     <script>
+        document.getElementById("aboutBtn").addEventListener("click", () => {
+            window.location.href = "lab 13.html";
+        });
         const copyBtn = document.getElementById('copyButton');
         const phoneText = document.getElementById('phoneNumber').textContent.trim();
 
@@ -228,8 +184,6 @@ spline-viewer {
                 setTimeout(() => {
                     copyBtn.textContent = 'Утасны дугаарыг залгах';
                 }, 2000);
-            }).catch(err => {
-                alert('Хуулж чадсангүй: ' + err);
             });
         });
     </script>

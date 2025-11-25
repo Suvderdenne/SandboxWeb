@@ -42,13 +42,16 @@
             font-size: 36px;
             color: #ff00ff;
         }
+
         #about {
             flex-grow: 1;
             text-align: center;
             margin-top: 40px;
         }
 
+        /* “Бидний тухай” товчлуур */
         #aboutBtn {
+            display: inline-block;
             padding: 15px 35px;
             font-size: 22px;
             color: #ffccff;
@@ -58,6 +61,7 @@
             cursor: pointer;
             transition: 0.3s;
             box-shadow: 0 0 15px #ff00ff;
+            text-decoration: none;
         }
 
         #aboutBtn:hover {
@@ -155,8 +159,9 @@
         <header>
             <h1>Sandbox</h1>
         </header>
+
         <section id="about">
-            <button id="aboutBtn">Бидний тухай</button>
+            <a id="aboutBtn" href="timeline.html">Бидний тухай</a>
         </section>
 
         <footer>
@@ -172,9 +177,6 @@
     </div>
 
     <script>
-        document.getElementById("aboutBtn").addEventListener("click", () => {
-            window.location.href = "lab 13.html";
-        });
         const copyBtn = document.getElementById('copyButton');
         const phoneText = document.getElementById('phoneNumber').textContent.trim();
 

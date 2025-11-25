@@ -137,6 +137,20 @@
       width: 200px;
       height: 35px;
     }
+    .btm{
+      display:inline-block;
+      padding:12px 20px;
+      border-radius:999px;
+      border:none;cursor:pointer;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:1px
+    }
+    .btm-primary{
+      background:linear-gradient(90deg,#ff2d95,#ff8acb);
+      color:#000000;
+      border:1px solid rgba(255,255,255,0.06);
+    }
 
     @media (max-width:900px){
       .card{flex-direction:column;
@@ -162,7 +176,7 @@
       <h1>Нэвтрэх</h1>
       <p class="lead">Имэйл болон нууц үгээр нэвтэрнэ үү</p>
 
-      <form id="signin-form" onsubmit="event.preventDefault();alert('Sand Box-т Тавтай морил')">
+      
         
 
         <!--nevtreh medeelel baigaa selection hesguud-->
@@ -184,6 +198,7 @@
         <div class="actions">
           <button class="btn btn-primary" type="submit">Нэвтрэх</button>
           <button class="btn btn-ghost" type="button" id="to-signup">Бүртгүүлэх</button>
+          <a href="index.html"><button class="btm btm-primary">Нүүр хуудас</button></a>
         </div>
       </form>
 
@@ -228,7 +243,8 @@
     function showSignInView(){ signInPanel.style.display = 'flex'; signUpPanel.style.display = 'none'; }
     function showSignUpView(){ signInPanel.style.display = 'none'; signUpPanel.style.display = 'flex'; }
 
-    if(window.innerWidth<=900){ signInPanel.style.display='flex'; signUpPanel.style.display='flex'; } else { signUpPanel.style.display='none'; signInPanel.style.display='flex'; }
+    if(window.innerWidth<=900){ signInPanel.style.display='flex'; signUpPanel.style.display='flex'; } 
+    else { signUpPanel.style.display='none'; signInPanel.style.display='flex'; }
 
     toSignup.addEventListener('click', showSignUpView);
     toSignin.addEventListener('click', showSignInView);

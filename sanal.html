@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iu</title>
+  <style>
+    /* --------------- Сайтны үндсэн хэв загвар --------------- */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #750c8d, #9d1fad);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    header {
+      position: sticky; top: 0; width: 100%; padding: 15px 30px;
+      background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); display: flex;
+      justify-content: space-between; align-items: center; z-index:1000;
+    }
+    header .logo { font-size:24px; font-weight:bold; cursor:pointer; text-shadow:1px1px2px rgba(0,0,0,0.5);}
+    header nav a { color:#fff; text-decoration:none; margin-left:25px; font-weight:500; transition: transform 0.3s, color 0.3s;}
+    header nav a:hover { color:#FFD700; transform:translateY(-3px); }
+
+    .page { width:100%; height:100vh; position:relative; display:flex; justify-content:center; align-items:center; transition:all 0.8s ease;}
+    .hidden { opacity:0; pointer-events:none; transform:scale(0.9); }
+
+    .card {
+      width:400px; background: rgba(255,255,255,0.15); border-radius:20px;
+      box-shadow:0 20px 40px rgba(0,0,0,0.3); backdrop-filter:blur(10px);
+      transform-style:preserve-3d; transform:rotateY(15deg) rotateX(10deg); transition: transform 0.6s ease;
+    }
+    .card:hover { transform:rotateY(0deg) rotateX(0deg) scale(1.05);}
+    .card h2 { text-align:center; margin-top:20px; text-shadow:0 0 10px rgba(255,255,255,0.3);}
+    form { display:flex; flex-direction:column; padding:20px; gap:15px;}
+    input, textarea { padding:12px; border:none; border-radius:10px; outline:none; background:rgba(255,255,255,0.8); font-size:15px; transition:transform 0.3s; color:#333;}
+    input:focus, textarea:focus { transform: scale(1.03);}
+    textarea { resize:none; height:100px;}
+    button { background: linear-gradient(45deg,#d653d8,#600756); border:none; padding:12px; border-radius:10px; color:white; font-weight:bold; cursor:pointer; transition: transform 0.3s, box-shadow 0.3s;}
+    button:hover { transform:translateY(-3px); box-shadow:0 8px 15px rgba(29,7,3,0.4);}
+    .footer { text-align:center; color: rgba(255,255,255,0.7); font-size:13px; margin-bottom:15px; }
+
+    .feedback-container { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:20px; width:90%; max-width:1000px; margin:100px auto 40px; z-index:2; }
+    .feedback-card { background: rgba(255,255,255,0.15); border-radius:15px; box-shadow:0 10px 25px rgba(0,0,0,0.3); backdrop-filter:blur(10px); padding:20px; transform-style: preserve-3d; transform: rotateY(10deg) rotateX(5deg); transition: all 0.5s ease;}
+    .feedback-card:hover { transform: rotateY(0deg) rotateX(0deg) scale(1.05); box-shadow:0 20px 40px rgba(0,0,0,0.5);}
+    .feedback-card h3 { color:#ffeb3b; }
+    .feedback-card .email { font-size:0.9em; opacity:0.8;}
+    .feedback-card .date { text-align:right; font-size:0.8em; color:#cfd8dc;}
+    .back-btn, .clear-btn { margin-top:20px; background: rgba(255,255,255,0.2); border:none; color:#fff; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:bold;}
+    .back-btn:hover, .clear-btn:hover { background: rgba(255,255,255,0.3);}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">💎 MyLogo</div>
+    <nav>
+      <a href="#page1">Санал илгээх</a>
+      <a href="#page2">Санал хүлээн авсан</a>
+    </nav>
+  </header>
+
+  <!-- Санал илгээх хуудас -->
+  <div class="page" id="page1">
+    <div class="card">
+      <h2>💬 Санал хүсэлт</h2>
+      <form id="feedbackForm">
+        <input type="text" id="name" placeholder="Нэрээ оруулна уу" required>
+        <input type="email" id="email" placeholder="Имэйл хаяг" required>
+        <textarea id="message" placeholder="Санал хүсэлтээ энд бичнэ үү..." required></textarea>
+        <button type="submit">Илгээх</button>
+      </form>
+      <div class="footer">Бид таны саналд талархаж байна 💙</div>
+    </div>
+  </div>
+
+  <!-- Хүлээн авсан санал хуудас -->
+  <div class="page hidden" id="page2" style="flex-direction: column;">
+    <h1 style="margin-top:40px; z-index:2;">📋 Хүлээн авсан санал</h1>
+    <div class="feedback-container" id="feedbackContainer"></div>
+    <!-- Бүх санал устгах товч -->
+    <button class="clear-btn" id="clearAllBtn">Бүх санал устгах</button>
+    <button class="back-btn" id="backBtn">← Буцах</button>
+  </div>
+
+  <script>
+    const page1 = document.getElementById("page1");
+    const page2 = document.getElementById("page2");
+    const form = document.getElementById("feedbackForm");
+    const container = document.getElementById("feedbackContainer");
+    const backBtn = document.getElementById("backBtn");
+    const clearAllBtn = document.getElementById("clearAllBtn");
+
+    let feedbacksPerPage = 8;
+    let currentPage = 1;
+
+    // Feedback-г харуулах функц
+    function showFeedbacks(page = 1) {
+      container.innerHTML = "";
+      let feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+
+      if (feedbacks.length === 0) {
+        container.innerHTML = "<p style='opacity:0.8;'>Одоогоор санал байхгүй байна.</p>";
+        return;
+      }
+
+      let start = (page - 1) * feedbacksPerPage;
+      let end = start + feedbacksPerPage;
+      let pageFeedbacks = feedbacks.slice().reverse().slice(start,end);
+
+      pageFeedbacks.forEach(fb => {
+        const card = document.createElement("div");
+        card.className = "feedback-card";
+        card.innerHTML = `
+          <h3>${fb.name}</h3>
+          <div class="email">${fb.email}</div>
+          <p>${fb.message}</p>
+          <div class="date">${fb.date}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Форм илгээх
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      let name = document.getElementById("name").value;
+      let email = document.getElementById("email").value;
+      let message = document.getElementById("message").value;
+      let date = new Date().toISOString().split('T')[0];
+
+      let feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+      feedbacks.push({name,email,message,date});
+      localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
+
+      form.reset();
+      page1.classList.add("hidden");
+      page2.classList.remove("hidden");
+      currentPage = 1;
+      showFeedbacks(currentPage);
+    });
+
+    // Буцах товч
+    backBtn.addEventListener("click", () => {
+      page2.classList.add("hidden");
+      page1.classList.remove("hidden");
+    });
+
+    // Бүх санал устгах товч
+    clearAllBtn.addEventListener("click", () => {
+      if(confirm("Бүх саналыг устгах уу?")) {
+        localStorage.removeItem("feedbacks"); // Бүх feedback устгах
+        showFeedbacks(); // Feedback page-г шинэчлэх
+      }
+    });
+  </script>
+</body>
+</html>

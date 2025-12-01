@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iu</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #750c8d, #9d1fad);
+      color: #fff;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* -------- Санал илгээх хэсэг -------- */
+    .page {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0; left: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.8s ease;
+    }
+
+    .hidden { opacity: 0; pointer-events: none; transform: scale(0.9); }
+
+    .card {
+      width: 400px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      transform-style: preserve-3d;
+      transform: rotateY(15deg) rotateX(10deg);
+      transition: transform 0.6s ease;
+    }
+    .card:hover { transform: rotateY(0deg) rotateX(0deg) scale(1.05); }
+
+    .card h2 {
+      text-align: center;
+      margin-top: 20px;
+      text-shadow: 0 0 10px rgba(255,255,255,0.3);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 15px;
+    }
+
+    input, textarea {
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.8);
+      font-size: 15px;
+      transition: transform 0.3s;
+      color: #333;
+    }
+
+    input:focus, textarea:focus { transform: scale(1.03); }
+    textarea { resize: none; height: 100px; }
+
+    button {
+      background: linear-gradient(45deg, #d653d8, #600756);
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 15px rgba(29, 7, 3, 0.4);
+    }
+
+    .footer {
+      text-align: center;
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    /* -------- Хүлээн авсан хэсэг -------- */
+    .background {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      perspective: 1000px;
+    }
+
+    .cube {
+      position: absolute;
+      width: 20px; height: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      transform-style: preserve-3d;
+      animation: float 15s infinite linear;
+    }
+
+    @keyframes float {
+      0% { transform: translate3d(0,0,0) rotateX(0) rotateY(0); opacity: 0.6; }
+      50% { transform: translate3d(200px,-200px,200px) rotateX(180deg) rotateY(180deg); opacity: 1; }
+      100% { transform: translate3d(0,0,0) rotateX(360deg) rotateY(360deg); opacity: 0.6; }
+    }
+
+    .cube:nth-child(1){ left:10%; top:20%; animation-duration:12s; }
+    .cube:nth-child(2){ left:30%; top:60%; animation-duration:18s; }
+    .cube:nth-child(3){ left:50%; top:10%; animation-duration:22s; }
+    .cube:nth-child(4){ left:70%; top:40%; animation-duration:16s; }
+    .cube:nth-child(5){ left:80%; top:70%; animation-duration:20s; }
+    .cube:nth-child(6){ left:90%; top:30%; animation-duration:25s; }
+
+    .feedback-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      width: 90%;
+      max-width: 1000px;
+      margin: 100px auto 40px;
+      z-index: 2;
+    }
+
+    .feedback-card {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      transform-style: preserve-3d;
+      transform: rotateY(10deg) rotateX(5deg);
+      transition: all 0.5s ease;
+    }
+    .feedback-card:hover {
+      transform: rotateY(0deg) rotateX(0deg) scale(1.05);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .feedback-card h3 { color: #ffeb3b; }
+    .feedback-card .email { font-size: 0.9em; opacity: 0.8; }
+    .feedback-card .date { text-align: right; font-size: 0.8em; color: #cfd8dc; }
+
+    .back-btn {
+      margin-top: 20px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .back-btn:hover { background: rgba(255,255,255,0.3); }
+  </style>
+</head>
+<body>
+  <!-- 1-р хуудас: санал илгээх -->
+  <div class="page" id="page1">
+    <div class="card">
+      <h2>💬 Санал хүсэлт</h2>
+      <form id="feedbackForm">
+        <input type="text" id="name" placeholder="Нэрээ оруулна уу" required>
+        <input type="email" id="email" placeholder="Имэйл хаяг" required>
+        <textarea id="message" placeholder="Санал хүсэлтээ энд бичнэ үү..." required></textarea>
+        <button type="submit">Илгээх</button>
+      </form>
+      <div class="footer">Бид таны саналд талархаж байна 💙</div>
+    </div>
+  </div>
+
+  <!-- 2-р хуудас: хүлээн авсан санал -->
+  <div class="page hidden" id="page2" style="background: radial-gradient(circle at 30% 30%, #c651ce, #670b86); flex-direction: column;">
+    <div class="background">
+      <div class="cube"></div><div class="cube"></div><div class="cube"></div>
+      <div class="cube"></div><div class="cube"></div><div class="cube"></div>
+    </div>
+    <h1 style="margin-top: 40px; z-index: 2;">📋 Хүлээн авсан санал хүсэлтүүд</h1>
+    <div class="feedback-container" id="feedbackContainer"></div>
+    <button class="back-btn" id="backBtn">← Буцах</button>
+  </div>
+
+  <script>
+    const page1 = document.getElementById("page1");
+    const page2 = document.getElementById("page2");
+    const form = document.getElementById("feedbackForm");
+    const container = document.getElementById("feedbackContainer");
+    const backBtn = document.getElementById("backBtn");
+
+    function showFeedbacks() {
+      container.innerHTML = "";
+      const feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+      if (feedbacks.length === 0) {
+        container.innerHTML = "<p style='opacity:0.8;'>Одоогоор санал байхгүй байна.</p>";
+      } else {
+        feedbacks.reverse().forEach(fb => {
+          const card = document.createElement("div");
+          card.className = "feedback-card";
+          card.innerHTML = `
+            <h3>${fb.name}</h3>
+            <div class="email">${fb.email}</div>
+            <p>${fb.message}</p>
+            <div class="date">${fb.date}</div>
+          `;
+          container.appendChild(card);
+        });
+      }
+    }
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const message = document.getElementById("message").value;
+      const date = new Date().toISOString().split('T')[0];
+
+      let feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+      feedbacks.push({ name, email, message, date });
+      localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
+
+      form.reset();
+      page1.classList.add("hidden");
+      page2.classList.remove("hidden");
+      showFeedbacks();
+    });
+
+    backBtn.addEventListener("click", () => {
+      page2.classList.add("hidden");
+      page1.classList.remove("hidden");
+    });
+
+    // Хэрвээ өмнө хадгалсан санал байвал автоматаар 2-р хуудсыг үзүүлж болно
+  </script>
+</body>
+</html>

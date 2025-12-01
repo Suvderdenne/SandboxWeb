@@ -7,6 +7,7 @@
       background-size: 100% 400%;
       animation: bgScroll 20s ease-in-out infinite alternate;
       min-height: 300vh; 
+      overflow-x: hidden;
     }
 
     @keyframes bgScroll {
@@ -64,6 +65,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 10%;
+       max-width: 100%; overflow-x: hidden;
     }
 
     .hero iframe {
@@ -193,4 +195,64 @@ a{
   text-decoration: none;
 
 }
+nav {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
 
+nav .logo {
+  position: absolute;
+  left: 25px;
+  height: 45px;
+  width: auto;
+}
+
+nav .profile {
+  position: absolute;
+  right: 25px;
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.5);
+}
+
+
+
+.info-section {
+  width: 100%;
+  padding: 80px 5%;
+  margin-top: 80px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.cards-container {
+  width: 100%;
+  padding: 80px 5%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-top: 200px;
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  padding: 25px;
+  border-radius: 15px;
+  backdrop-filter: blur(6px);
+  text-align: center;
+}
+
+/* ----------------------- FOOTER ----------------------- */
+footer {
+  text-align: center;
+  padding: 30px;
+  margin-top: 50px;
+  background: rgba(0,0,0,0.3);
+  font-size: 16px;
+}

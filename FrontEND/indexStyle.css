@@ -129,7 +129,10 @@ nav .profile {
   backdrop-filter: blur(6px);
   text-align: center;
 }
-
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
 
 @media (max-width: 1100px) {
   .cards-container {

@@ -1,169 +1,182 @@
-  html, body {
-      margin: 0;
-      padding: 0;
-      font-family: "Poppins", Arial, sans-serif;
-      color: white;
-      background: linear-gradient(180deg, #0b0014, #3c0078, #5f00ff, #ff00aa);
-      background-size: 100% 400%;
-      animation: bgScroll 20s ease-in-out infinite alternate;
-      min-height: 300vh; 
-    }
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", 'Times New Roman', Times, serif, sans-serif;
+  color: white;
+  background: linear-gradient(180deg, #0b0014, #3c0078, #5f00ff, #ff00aa);
+  background-size: 100% 400%;
+  animation: bgScroll 20s ease-in-out infinite alternate;
+  overflow-x: hidden;
+}
 
-    @keyframes bgScroll {
-      0% { background-position: top; }
-      100% { background-position: bottom; }
-    }
+@keyframes bgScroll {
+  0% { background-position: top; }
+  100% { background-position: bottom; }
+}
 
-    nav {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 15px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      position: fixed;
-      width: 100%;
-      top: 0;
-      left: 0;
-      background: rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(8px);
-      z-index: 10;
-    }
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  z-index: 100;
+  gap: 20px;
+}
 
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 15px;
-      font-size: 16px;
-      border: 1px solid rgba(255,255,255,0.4);
-      padding: 6px 18px;
-      border-radius: 25px;
-      transition: 0.3s;
-    }
-    b{color: white;
-      text-decoration: none;
-      margin: 0 15px;
-      font-size: 16px;
-      border: 1px solid rgba(255,255,255,0.4);
-      padding: 6px 18px;
-      border-radius: 25px;
-      transition: 0.3s;}
-      a:hover{
-         background-color: rgba(255,255,255,0.1);
-      color: #ffb6ff;
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 16px;
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 6px 18px;
+  border-radius: 25px;
+  transition: 0.3s;
+}
 
-      }
+nav a:hover {
+  background-color: rgba(255,255,255,0.1);
+  color: #ffb6ff;
+}
 
-    nav b:hover {
-      background-color: rgba(255,255,255,0.1);
-      color: #ffb6ff;
-    }
+nav .logo {
+  position: absolute;
+  left: 80px;
+  height: 45px;
+  width: 60px;
+  height: 60px;
+}
 
-    .hero {
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 10%;
-    }
+nav .profile {
+  position: absolute;
+  right: 25px;
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.5);
+}
 
-    .hero iframe {
-      width: 50%;
-      height: 80%;
-      border: none;
-      border-radius: 20px;
-    }
 
-    .hero-content {
-      z-index: 5;
-    }
+.hero {
+  height: 100vh;
+  padding: 0 10%;
+  margin-top: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-    .hero-content h1 {
-      font-size: 22px;
-      margin: 0;
-      font-weight: 400;
-    }
+.hero-content h1 {
+  font-size: 24px;
+}
 
-    .hero-content h2 {
-      font-size: 70px;
-      font-weight: 700;
-      margin: 10px 0 0;
-    }
+.hero-content h2 {
+  font-size: 70px;
+  margin: 0;
+  font-weight: 700;
+}
 
-    .hero-content h3 {
-      font-size: 70px;
-      color: #ff55ff;
-      font-weight: 700;
-      margin: 0;
-    }
+.hero-content h3 {
+  font-size: 70px;
+  margin: -10px 0 0;
+  font-weight: 700;
+  color: #ff55ff;
+}
 
-    .hero-content p {
-      font-size: 22px;
-      margin: 20px 0;
-    }
+.hero-content p {
+  font-size: 22px;
+  margin: 10px 0;
+}
 
-    .hero-content button {
-      background-color: #b72cff;
-      border: none;
-      color: white;
-      padding: 12px 30px;
-      border-radius: 30px;
-      font-size: 18px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
+.hero-content button {
+  background-color: #b72cff;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
-    .hero-content button:hover {
-      background-color: #d96bff;
-    }
+.hero-content button:hover {
+  background-color: #d96bff;
+}
 
-    
-    .section {
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-    }
+.cards-container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 60px 3%;
+  margin: 120px auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  align-items: start;
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  text-align: center;
+}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 1100px) {
+  .cards-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  margin-top: 50px;
+  background: rgba(0,0,0,0.3);
+  font-size: 16px;
+}
 
 @media (max-width: 768px) {
-  
+
   nav {
     flex-direction: column;
-    padding: 10px 0;
+    gap: 10px;
   }
-
-  nav a {
-    display: block;
-    margin: 8px 0;
-    font-size: 14px;
-    padding: 8px 16px;
-  }
-
 
   .hero {
-    flex-direction: column;      
-    justify-content: center;
+    flex-direction: column;
     text-align: center;
-    padding: 0 5%;
-  }
-
-  .hero-content {
-    margin-bottom: 30px;
-  }
-
-  .hero iframe {
-    width: 100%;                  
-    height: 250px;               
-  }
-
-  .hero-content h1 {
-    font-size: 18px;
   }
 
   .hero-content h2,
   .hero-content h3 {
-    font-size: 38px;
+    font-size: 40px;
   }
+<<<<<<< HEAD
 
   .hero-content p {
     font-size: 16px;
@@ -193,3 +206,6 @@ a{
   text-decoration: none;
 
 }
+=======
+}
+>>>>>>> 1158b4f8b1411a4688d5bb259a12b2b77a93b93f

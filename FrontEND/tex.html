@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вэб Технологиуд - Гэрэлтдэг Popup</title>
+    <title>Вэб Технологиуд</title>
     
     <style>
         /* --- CSS ХЭСЭГ --- */
         body {
-            background-color: #521c74; /* Зураг дээрх шиг нил ягаан өнгө */
+            background-color: #521c74; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: white;
             display: flex;
@@ -39,7 +39,7 @@
             margin-bottom: 60px;
         }
 
-        /* Картын загвар */
+    
         .card {
             background: rgba(138, 43, 226, 0.4);
             padding: 25px;
@@ -52,7 +52,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        /* Зүүн талын өнгөт зураас */
+        
         .card::before {
             content: '';
             position: absolute;
@@ -63,14 +63,13 @@
             border-radius: 0 5px 5px 0;
         }
 
-        /* Hover буюу хулгана очиход гэрэлтэх */
+
         .card:hover {
             transform: translateY(-10px) scale(1.02);
             background: rgba(138, 43, 226, 0.6);
             box-shadow: 0 0 25px rgba(251, 250, 250, 0.967);
         }
 
-        /* Өнгөнүүд */
         .orange::before { background: #ff7f50; }
         .blue::before { background: #00bfff; }
         .yellow::before { background: #ffd700; }
@@ -83,7 +82,7 @@
         .card h3 { margin: 0 0 10px 0; color: #fff; font-size: 1.4rem; }
         .card p { font-size: 0.9rem; line-height: 1.5; opacity: 0.9; }
 
-        /* --- POPUP (MODAL) ЗАГВАР --- */
+    
         .modal {
             display: none;
             position: fixed;
@@ -106,7 +105,7 @@
             border-radius: 25px;
             text-align: center;
             border: 2px solid #00ffff;
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.5); /* Цэнхэр неон гэрэлтэлт */
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.5);
             position: relative;
         }
 
@@ -179,7 +178,7 @@
 </div>
 
 <script>
-    /* --- JAVASCRIPT ХЭСЭГ --- */
+ 
     function showPopup(title, text) {
         document.getElementById('popTitle').innerText = title;
         document.getElementById('popText').innerText = text;

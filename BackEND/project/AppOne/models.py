@@ -23,3 +23,4 @@ class User(models.Model):
     class Meta:
         verbose_name = "Оюутан"
         verbose_name_plural = "Оюутнууд"
+        db_table = "users"

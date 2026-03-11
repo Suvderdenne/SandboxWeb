@@ -206,7 +206,6 @@ a{
   text-decoration: none;
 
 }
-/* Захиалгын формд зориулсан нэмэлт стиль (indexStyle.css-д нэмээрэй) */
 .order-form {
   display: flex;
   flex-direction: column;

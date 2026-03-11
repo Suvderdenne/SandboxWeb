@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shilen Menu + Feedback + 3D Cube</title>
+<style>
+/* ---- Шилэн header ---- */
+.o_main_navbar {
+  background-color: rgba(255,255,255,0.0) !important;
+  box-shadow: none !important;
+  position: fixed;
+  top:0; left:0;
+  width:100%;
+  z-index:999;
+  display:flex;
+  justify-content:center;
+  padding:10px 20px;
+}
+
+.o_main_navbar .nav-item > a{
+  color:#fff;
+  margin:0 15px;
+  text-decoration:none;
+  font-weight:bold;
+  transition: color 0.3s;
+}
+.o_main_navbar .nav-item > a:hover { color:#ffd700; }
+
+/* ---- Body ---- */
+body{
+  font-family:"Poppins",sans-serif;
+  margin:0;
+  background:linear-gradient(135deg,#750c8d,#9d1fad);
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding-top:70px;
+  min-height:100vh;
+}
+
+/* ---- Container: card + cube хажууд ---- */
+.container{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:flex-start;
+  gap:40px;
+  margin-top:20px;
+}
+
+/* Flex child */
+.page, .cube-container {
+  flex: 0 0 auto;
+}
+
+/* ---- Feedback card ---- */
+.page {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.card {
+  width: 400px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  transform-style: preserve-3d;
+  transform: rotateY(15deg) rotateX(10deg);
+  transition: transform 0.6s ease;
+}
+.card:hover { transform: rotateY(0deg) rotateX(0deg) scale(1.05); }
+
+.card h2 {
+  text-align: center;
+  margin-top: 20px;
+  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 15px;
+}
+
+input, textarea {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.8);
+  font-size: 15px;
+  transition: transform 0.3s;
+  color: #333;
+}
+
+input:focus, textarea:focus { transform: scale(1.03); }
+textarea { resize:none; height:100px; }
+
+button {
+  background: linear-gradient(45deg, #d653d8,#600756);
+  border:none;
+  padding:12px;
+  border-radius:10px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+button:hover { transform: translateY(-3px); box-shadow:0 8px 15px rgba(29,7,3,0.4); }
+
+.footer {
+  text-align:center;
+  color: rgba(255,255,255,0.7);
+  font-size:13px;
+  margin-bottom:15px;
+}
+
+/* ---- 3D Cube ---- */
+.cube-container{
+  width:300px;
+  height:300px;
+  border-radius:14px;
+  background:linear-gradient(180deg,rgba(33,3,21,0.8),rgba(255,255,255,0.02));
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* ---- Responsive ---- */
+@media(max-width:850px){
+  .container{
+    flex-direction:column;
+    align-items:center;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Шилэн header -->
+<nav class="o_main_navbar">
+  <div class="nav-item"><a href="#">Нүүр</a></div>
+  <div class="nav-item"><a href="#">Санал</a></div>
+  <div class="nav-item"><a href="#">Шинэ Menu</a></div>
+</nav>
+
+<div class="container">
+  <!-- Feedback card -->
+  <div class="page" id="page1">
+    <div class="card">
+      <h2>💬 Санал хүсэлт</h2>
+      <form id="feedbackForm">
+        <input type="text" id="name" placeholder="Нэрээ оруулна уу" required>
+        <input type="email" id="email" placeholder="Имэйл хаяг" required>
+        <textarea id="message" placeholder="Санал хүсэлтээ энд бичнэ үү..." required></textarea>
+        <button type="submit">Илгээх</button>
+      </form>
+      <div class="footer">Бид таны саналд талархаж байна 💙</div>
+    </div>
+  </div>
+
+  <!-- 3D Cube хажууд -->
+  <div class="cube-container" id="cubeContainer"></div>
+</div>
+
+<script src="https://unpkg.com/three@0.159.0/build/three.min.js"></script>
+<script>
+// ---------- Feedback ----------
+const form=document.getElementById("feedbackForm");
+form.addEventListener("submit", e=>{
+  e.preventDefault();
+  const name=document.getElementById("name").value;
+  const email=document.getElementById("email").value;
+  const message=document.getElementById("message").value;
+  const date=new Date().toISOString().split('T')[0];
+  let feedbacks=JSON.parse(localStorage.getItem("feedbacks"))||[];
+  feedbacks.push({name,email,message,date});
+  localStorage.setItem("feedbacks",JSON.stringify(feedbacks));
+  alert("Таны санал амжилттай хадгалагдлаа!");
+  form.reset();
+});
+
+// ---------- 3D Cube ----------
+const faceTexts=[
+  {title:'Төсөл', lines:['Нэр: Төсөл X','Багахан тайлбар']},
+  {title:'Проблем', lines:['Ямар асуудал','Хэрэглэгчийн хэрэгцээ']},
+  {title:'Шийдэл', lines:['Манай бүтээгдэхүүн','Онцлог']},
+  {title:'Зах зээл', lines:['Зорилтот хэрэглэгч','Стратеги']},
+  {title:'Бизнес', lines:['Орлогын загвар','Төлөвлөгөө']},
+  {title:'Холбоо', lines:['Email: you@site.com','site.mn']}
+];
+
+const stage=document.getElementById('cubeContainer');
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(35, stage.clientWidth/stage.clientHeight, 0.1, 1000);
+camera.position.set(0,0,5);
+
+const renderer=new THREE.WebGLRenderer({antialias:true, alpha:true});
+renderer.setSize(stage.clientWidth, stage.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+stage.appendChild(renderer.domElement);
+
+const hemi=new THREE.HemisphereLight(0xffffff,0x444444,0.9); scene.add(hemi);
+const dir=new THREE.DirectionalLight(0xffffff,0.6); dir.position.set(5,5,5); scene.add(dir);
+
+function makeFaceTexture(obj){
+  const size=512;
+  const canvas=document.createElement('canvas'); canvas.width=size; canvas.height=size;
+  const ctx=canvas.getContext('2d');
+  const g=ctx.createLinearGradient(0,0,size,size);
+  g.addColorStop(0,'#0f172a'); g.addColorStop(1,'#071023');
+  ctx.fillStyle=g; ctx.fillRect(0,0,size,size);
+  ctx.fillStyle='#e6eef8'; ctx.font='bold 34px sans-serif'; ctx.textAlign='center';
+  ctx.fillText(obj.title,size/2,80);
+  ctx.font='16px sans-serif';
+  const startY=140, lineH=26;
+  for(let i=0;i<obj.lines.length;i++){ ctx.fillText('- '+obj.lines[i], size/2, startY+i*lineH);}
+  return new THREE.CanvasTexture(canvas);
+}
+
+const materials=faceTexts.map(t=>new THREE.MeshStandardMaterial({map:makeFaceTexture(t)}));
+const geo=new THREE.BoxGeometry(2.2,2.2,2.2);
+const cube=new THREE.Mesh(geo,materials);
+cube.rotation.y=0.4; cube.rotation.x=-0.18; scene.add(cube);
+
+function animate(){
+  requestAnimationFrame(animate);
+  cube.rotation.x += 0.002;
+  cube.rotation.y += 0.003;
+  renderer.render(scene,camera);
+}
+animate();
+
+let dragging=false,lastX=0;
+stage.addEventListener('pointerdown', e=>{dragging=true; lastX=e.clientX;});
+window.addEventListener('pointerup', ()=>{dragging=false;});
+window.addEventListener('pointermove', e=>{
+  if(dragging){ const dx=e.clientX-lastX; cube.rotation.y += dx*0.005; lastX=e.clientX; }
+});
+
+window.addEventListener('resize', ()=>{
+  renderer.setSize(stage.clientWidth,stage.clientHeight);
+  camera.aspect=stage.clientWidth/stage.clientHeight;
+  camera.updateProjectionMatrix();
+});
+</script>
+</body>
+</html>

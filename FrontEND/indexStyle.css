@@ -206,6 +206,46 @@ a{
   text-decoration: none;
 
 }
-=======
+/* Захиалгын формд зориулсан нэмэлт стиль (indexStyle.css-д нэмээрэй) */
+.order-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 480px;
+  margin: 30px auto 0;
 }
->>>>>>> 1158b4f8b1411a4688d5bb259a12b2b77a93b93f
+
+.order-form input,
+.order-form textarea,
+.order-form select {
+  padding: 14px 18px;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  font-size: 16px;
+  backdrop-filter: blur(4px);
+}
+
+.order-form input::placeholder,
+.order-form textarea::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+.order-form button {
+  background-color: #b72cff;
+  border: none;
+  color: white;
+  padding: 14px 40px;
+  border-radius: 30px;
+  font-size: 18px;
+  cursor: pointer;
+  margin: 10px auto 0;
+  transition: 0.3s;
+}
+
+.order-form button:hover {
+  background-color: #d96bff;
+  transform: translateY(-2px);
+}
+

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 
 class User(models.Model):
@@ -14,11 +15,24 @@ class User(models.Model):
     age = models.PositiveIntegerField(verbose_name="Нас")
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name="Хүйс")
     phone_number = models.CharField(max_length=20, verbose_name="Утасны дугаар")
+    email = models.EmailField(unique=True, verbose_name="И-мэйл")
+    password = models.CharField(max_length=255, verbose_name="Нууц үг")
     course = models.PositiveIntegerField(verbose_name="Курс")
     major = models.CharField(max_length=100, verbose_name="Мэргэжил")
     student_code = models.CharField(max_length=20, unique=True, verbose_name="Оюутны код")
     skills = models.TextField(blank=True, null=True, verbose_name="Чадварууд")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Бүртгэгдсэн огноо")
+
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.password)
+
+    def save(self, *args, **kwargs):
+        if self.password and not self.password.startswith('pbkdf2_'):
+            self.password = make_password(self.password)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} - {self.student_code}"

@@ -3,256 +3,177 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Нэвтрэх / Бүртгүүлэх</title>
+  <title>Sand Box | Нэвтрэх & Бүртгүүлэх</title>
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
-    body{
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:#0b0b0b; 
-      height:100vh;overflow:hidden;
-    }
-    .bg-3d{ /* ar taliin backgroun heseg ungu solih*/
-      position:fixed;
-      inset:0;
-      z-index:0;
-      pointer-events:none;
-      display:block;
-      overflow:hidden;
-      background-color:rgb(42, 8, 42);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .bg-3d iframe{
-      position:absolute;
-      inset:-10%;
-      width:110%;
-      height:120%;
-      border:0;
-      transform:translateZ(0);
-      filter:contrast(1.05) saturate(1.05);
+    *{box-sizing:border-box; margin:0; padding:0}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0b0b0b; 
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
 
-    .card{ /*burtguuleh card heseg*/
-      z-index:2;position:relative;
-      max-width:980px;
-      width:92%;
-      background:linear-gradient( rgb(53, 5, 62), purple, rgb(234, 43, 234));
-      border-radius:14px;
-      backdrop-filter: blur(6px) saturate(120%);
-      box-shadow:0 10px 30px rgba(0,0,0,0.6);
-      overflow:hidden;
-      display:flex;
-      min-height:520px;
+    .card {
+      display: flex;
+      width: 100%;
+      height: 100vh;
+      background: #2b032b;
     }
 
-    .form-panel{
-      width:70%;
-      padding:48px 48px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      gap:18px
+    
+    .left-side {
+      flex: 1.1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .brand{
-      color:#fff;
-      font-weight:700;
-      font-size:60px
-    }
-    h1{
-      color:#fff;
-      font-size:28px;
-      margin-bottom:6px
-    }
-    p.lead{
-      color:rgba(255,255,255,0.85);
-      font-size:14px
+    spline-viewer { width: 100%; height: 100%; }
+
+    
+    .right-side {
+      flex: 0.9;
+      background: linear-gradient(180deg, #4b064b 0%, #a600a6 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5% 8%;
+      color: white;
     }
 
-    label{
-      color:rgba(255,255,255,0.9);
-      font-size:13px;
-      margin-bottom:6px
-    }
-    input[type="text"], input[type="email"], input[type="password"]{
-      width:100%;
-      padding:12px 14px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.06);
-      background:white;
-      color:#000000;
-      outline:none;
-      font-size:14px
-    }
+    .brand { font-size: 65px; font-weight: 900; margin-bottom: 10px; }
+    h1 { font-size: 32px; margin-bottom: 5px; }
+    p.lead { color: rgba(255,255,255,0.7); margin-bottom: 25px; font-size: 14px; }
 
-    .btn{
-      display:inline-block;
-      padding:12px 20px;
-      border-radius:999px;
-      border:none;cursor:pointer;
-      font-weight:700;
-      text-transform:uppercase;
-      letter-spacing:1px
-    }
-    .btn-primary{
-      background:linear-gradient(90deg,#ff2d95,#ff8acb);
-      color:#000000;
-      border:1px solid rgba(255,255,255,0.06);
-    }
-    .btn-ghost{
-      background:transparent;
-      color:#ffffff;
-      border:1px solid rgba(255,255,255,0.12);
-    }
-
-    .muted{
-      color:rgba(255,255,255,0.7);
-      font-size:13px
-    }
-    .form-row{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      margin-bottom:8px
-    }
-    .porm-row{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      margin-bottom:8px;
-      float: left;
-    }
-    .actions{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      margin-top:8px;
-    }
-    select{
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-size: 13px; margin-bottom: 8px; }
+    input, select {
+      width: 100%;
+      padding: 12px 15px;
       border-radius: 10px;
-      width: 200px;
-      height: 35px;
-    }
-    .btm{
-      display:inline-block;
-      padding:12px 20px;
-      border-radius:999px;
-      border:none;cursor:pointer;
-      font-weight:700;
-      text-transform:uppercase;
-      letter-spacing:1px
-    }
-    .btm-primary{
-      background:linear-gradient(90deg,#ff2d95,#ff8acb);
-      color:#000000;
-      border:1px solid rgba(255,255,255,0.06);
+      border: none;
+      background: white;
+      color: #000;
+      font-size: 14px;
+      outline: none;
     }
 
-    @media (max-width:900px){
-      .card{flex-direction:column;
-        min-height:760px}
-      .form-panel{width:100%;
-        padding:28px
-      }
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      align-items: center;
+    }
+    .btn {
+      padding: 12px 28px;
+      border-radius: 999px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 12px;
+      transition: 0.3s;
+    }
+    .btn-primary { background: #ff2d95; color: white; }
+    .btn-ghost { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+    
+    .hidden { display: none !important; }
+
+    @media (max-width: 900px) {
+      .card { flex-direction: column; overflow-y: auto; }
+      .left-side { height: 300px; flex: none; }
+      .right-side { padding: 40px 20px; flex: none; }
     }
   </style>
 </head>
 <body>
-  <div class="bg-3d" aria-hidden="true">
-    <iframe id="spline-embed" src="https://my.spline.design/your-scene-id/" allow="fullscreen; gyroscope; accelerometer; autoplay" title="Spline 3D background"></iframe>
-  </div> 
-  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.78/build/spline-viewer.js"></script>
-<spline-viewer url="https://prod.spline.design/b1Ya5dnMQwTITU6D/scene.splinecode"></spline-viewer>
 
-  <div class="overlay-gradient" aria-hidden="true"></div>
-
-  <div class="card" role="main">
-    <div class="form-panel" id="sign-in-panel">
-      <div class="brand">Sand Box</div>
-      <h1>Нэвтрэх</h1>
-      <p class="lead">Имэйл болон нууц үгээр нэвтэрнэ үү</p>
-
-      
-        
-
-        <!--nevtreh medeelel baigaa selection hesguud-->
-        <div class="form-row">
-          <label for="si-email">Имэйл</label>
-          <input id="si-email" type="email" required placeholder="Example@gmail.com">
-          <div class="form-row"><label for="su-name">Оюутны код</label><input id="su-name" type="text" required placeholder="Оюутны кодоо оруулна уу"></div>
-        </div>
-        <div class="form-row">
-          <label for="si-pass">Нууц үг</label>
-          <input id="si-pass" type="password" required placeholder="••••••••">
-         <label>Одоо байгаа күрс</label>
-            <select>
-                <option>1-күрс</option>
-                <option>2-күрс</option>
-                <option>3-күрс</option>
-                <option>4-күрс</option>
-            </select></div>
-        <div class="actions">
-          <a href="sandbox.html"><button class="btn btn-primary" type="submit">Нэвтрэх</button></a>
-          <button class="btn btn-ghost" type="button" id="to-signup">Бүртгүүлэх</button>
-          <a href="index.html"><button class="btm btm-primary">Нүүр хуудас</button></a>
-        </div>
-      </form>
-
-      <p class="muted">Нууц үгээ мартсан бол <a href="#" style="color:#ff8acb">энд</a> дарна уу</p>
+  <div class="card">
+    <div class="left-side">
+      <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.78/build/spline-viewer.js"></script>
+      <spline-viewer url="https://prod.spline.design/b1Ya5dnMQwTITU6D/scene.splinecode"></spline-viewer>
     </div>
 
-    <div class="form-panel" id="sign-up-panel" style="border-left:1px solid rgba(255,255,255,0.03)">
-      <div class="brand">Sand Box</div>
-      <h1>Бүртгүүлэх</h1>
-      <p class="lead">Шинэ акаунт үүсгэнэ үү</p>
-      <!--burtguuleh medeelel baigaa selection hesguud-->
-      <form id="signup-form" onsubmit="event.preventDefault();alert('Амжилттай Бүртгүүллээ')">
-        <div class="form-row"><label for="su-name">Нэр</label><input id="su-name" type="text" required placeholder="Овог Нэр"></div>
-        <div class="porm-row"><label for="su-email">Имэйл</label><input id="su-email" type="email" required placeholder="Example@gmail.com"></div>
-        <div class="form-row"><label for="su-pass">Нууц үг</label><input id="su-pass" type="password" required placeholder="••••••••"></div>
-        <div class="form-row"><label for="su-name">Оюутны код</label><input id="su-name" type="text" required placeholder="Оюутны кодоо оруулна уу"></div>
-        <div class="actions">
-          
-          <label>Одоо байгаа күрс</label>
+    <div class="right-side">
+      
+      <div id="login-panel">
+        <div class="brand">Sand Box</div>
+        <h1>Нэвтрэх</h1>
+        <p class="lead">Нэр болон нууц үгээрээ нэвтэрнэ үү</p>
+
+        <form onsubmit="event.preventDefault(); window.location.href='sandbox.html';">
+          <div class="form-group">
+            <label>Хэрэглэгчийн нэр</label>
+            <input type="text" required placeholder="Нэрээ оруулна уу">
+          </div>
+          <div class="form-group">
+            <label>Нууц үг</label>
+            <input type="password" required placeholder="••••••••">
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Нэвтрэх</button>
+            <button class="btn btn-ghost" type="button" onclick="toggleView('signup')">Бүртгүүлэх</button>
+            <button class="btn btn-ghost" type="button"><a href="index.html" style="text-decoration: none; color: white;">Нүүр хуудас</a></button>
+          </div>
+        </form>
+      </div>
+
+      <div id="signup-panel" class="hidden">
+        <div class="brand">Sand Box</div>
+        <h1>Бүртгүүлэх</h1>
+        <p class="lead">Шинэ акаунт үүсгэнэ үү</p>
+
+        <form onsubmit="event.preventDefault(); alert('Амжилттай бүртгүүллээ!'); toggleView('login');">
+          <div class="form-group">
+            <label>Нэр</label>
+            <input type="text" required placeholder="Овог Нэр">
+          </div>
+          <div class="form-group">
+            <label>Имэйл хаяг</label>
+            <input type="email" required placeholder="example@gmail.com">
+          </div>
+          <div class="form-group">
+            <label>Нууц үг</label>
+            <input type="password" required placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label>Оюутны код</label>
+            <input type="text" required placeholder="Оюутны кодоо оруулна уу">
+          </div>
+          <div class="form-group">
+            <label>Одоо байгаа курс</label>
             <select>
-                <option>1-күрс</option>
-                <option>2-күрс</option>
-                <option>3-күрс</option>
-                <option>4-күрс</option>
+              <option>1-курс</option>
+              <option>2-курс</option>
+              <option>3-курс</option>
+              <option>4-курс</option>
             </select>
-          <button class="btn btn-primary" type="submit">Бүртгүүлэх</button>
-          <button class="btn btn-ghost" type="button" id="to-signin">Нэвтрэх</button>
-        </div>
-      </form>
+          </div>
 
-      <p class="muted small">Бүртгүүлэх товч дарснаар та ашиглалтын нөхцлийг хүлээн зөвшөөрнө.</p>
-    </div> 
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Бүртгүүлэх</button>
+            <button class="btn btn-ghost" type="button" onclick="toggleView('login')">Буцах</button>
+          </div>
+        </form>
+      </div>
 
+    </div>
   </div>
 
   <script>
-    const signInPanel = document.getElementById('sign-in-panel');
-    const signUpPanel = document.getElementById('sign-up-panel');
-    const toSignup = document.getElementById('to-signup');
-    const toSignin = document.getElementById('to-signin');
-
-    function showSignInView(){ signInPanel.style.display = 'flex'; signUpPanel.style.display = 'none'; }
-    function showSignUpView(){ signInPanel.style.display = 'none'; signUpPanel.style.display = 'flex'; }
-
-    if(window.innerWidth<=900){ signInPanel.style.display='flex'; signUpPanel.style.display='flex'; } 
-    else { signUpPanel.style.display='none'; signInPanel.style.display='flex'; }
-
-    toSignup.addEventListener('click', showSignUpView);
-    toSignin.addEventListener('click', showSignInView);
-    function setSplineScene(sceneIdentifier){
-      const iframe = document.getElementById('spline-embed');
-      if(!iframe) return;
-      if(sceneIdentifier.startsWith('http')) iframe.src = sceneIdentifier;
-      else iframe.src = `https://my.spline.design/${sceneIdentifier}/`;
+    function toggleView(view) {
+      const login = document.getElementById('login-panel');
+      const signup = document.getElementById('signup-panel');
+      if (view === 'signup') {
+        login.classList.add('hidden');
+        signup.classList.remove('hidden');
+      } else {
+        signup.classList.add('hidden');
+        login.classList.remove('hidden');
+      }
     }
   </script>
 </body>

@@ -5,178 +5,314 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sandbox Timeline</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body{
-      font-family: Arial, sans-serif;
-      background: #0f001f;
-      padding: 40px;
-      color: #ffccff;
+    body {
+      font-family: 'Orbitron', 'Roboto Mono', monospace, sans-serif;
+      background: linear-gradient(135deg, #0a0015, #120025, #1a0033);
+      min-height: 100vh;
+      color: #e0ccff;
+      padding: 100px 20px 60px;
+      overflow-x: hidden;
     }
 
-    h1{
-      text-align:center;
-      margin-bottom:24px;
-      color:#ff00ff;
-      text-shadow:0 0 12px #ff00ff;
-      font-size:32px;
+    /* ===== NAV ===== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 0, 30, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,0,255,0.12);
+      z-index: 1000;
+    }
+
+    .logo {
+      position: absolute;
+      left: 24px;
+      width: 56px;
+      filter: drop-shadow(0 0 8px #ff00ff);
+    }
+
+    .profile {
+      position: absolute;
+      right: 24px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid #ff00ff;
+      box-shadow: 0 0 12px #ff00ff80;
+    }
+
+    .burger {
+      display: none;
+      position: absolute;
+      right: 90px;
+      font-size: 32px;
+      cursor: pointer;
+      color: #ff99ff;
+      text-shadow: 0 0 10px #ff00ff;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      background: none;
+      backdrop-filter: none;
+      box-shadow: none;
+      padding-top: 0;
+    }
+
+    .nav-links a {
+      color: #ffccff;
+      text-decoration: none;
+      padding: 8px 16px;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+      text-shadow: 0 0 6px #ff00ff60;
+      border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255,0,255,0.15);
+      color: #fff;
+      text-shadow: 0 0 12px #ff00ff;
+    }
+
+    /* Mobile-д зориулсан sidebar */
+    @media (max-width: 768px) {
+      .burger { display: block; }
+
+      .nav-links {
+        position: fixed;
+        top: 0; left: -280px;
+        width: 280px;
+        height: 100%;
+        background: rgba(15, 0, 35, 0.85);
+        backdrop-filter: blur(14px);
+        flex-direction: column;
+        padding-top: 90px;
+        gap: 24px;
+        transition: left 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        box-shadow: 10px 0 30px #ff00ff40;
+      }
+
+      .nav-links a {
+        padding: 14px 28px;
+      }
+
+      .nav-links.active { left: 0; }
+    }
+
+    /* Desktop-д зориулсан хэвтээ nav */
+    @media (min-width: 769px) {
+      .nav-links {
+        position: static;
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s;
+      z-index: 999;
+    }
+
+    .overlay.active { opacity: 1; pointer-events: all; }
+
+    /* ===== TIMELINE ===== */
+    h1 {
+      text-align: center;
+      margin-bottom: 60px;
+      font-size: 3.2rem;
+      color: #ff00ff;
+      text-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff80;
+      letter-spacing: 4px;
     }
 
     .timeline {
       position: relative;
+      max-width: 900px;
       margin: 0 auto;
-      max-width: 800px;
-      padding: 20px 0;
     }
 
-    /* center vertical neon line */
     .timeline::before {
       content: "";
       position: absolute;
       left: 50%;
-      top: 0;
       transform: translateX(-50%);
-      width: 4px;
+      width: 5px;
       height: 100%;
-      background: #ff00ff;
-      box-shadow: 0 0 12px #ff00ff;
+      background: linear-gradient(to bottom, #ff00ff, #00ffff, #ff00ff);
+      box-shadow: 0 0 20px #ff00ff80, 0 0 40px #00ffff60;
+      border-radius: 10px;
+      z-index: 1;
     }
 
     .entry {
       position: relative;
       width: 50%;
-      padding: 20px 30px;
+      padding: 30px 40px;
+      transition: transform 0.4s ease;
     }
 
-    .entry.left  { left: 0; text-align: right; }
-    .entry.right { left: 50%; text-align: left; }
+    .entry:hover { transform: translateY(-10px); }
 
-    /* the neon circle on the line */
+    .entry.left  { left: 0; text-align: right; padding-right: 80px; }
+    .entry.right { left: 50%; text-align: left; padding-left: 80px; }
+
     .entry::after {
       content: "";
       position: absolute;
-      top: 28px;
-      width: 16px;
-      height: 16px;
+      top: 38px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       background: #0f001f;
-      border: 4px solid #ff00ff;
-      box-shadow: 0 0 10px #ff00ff, 0 0 14px #cc00cc;
+      border: 5px solid #ff00ff;
+      box-shadow: 0 0 18px #ff00ff, inset 0 0 8px #ff00ff80;
+      z-index: 2;
     }
 
-    .entry.left::after  { right: -8px; }
-    .entry.right::after { left: -8px; }
+    .entry.left::after  { right: -11px; }
+    .entry.right::after { left: -11px; }
 
     .card {
-      background: #1a001a;
-      padding: 14px 20px;
-      border-radius: 12px;
-      display: block;
-      max-width: 90%;
-      box-shadow: 0 0 20px #440044;
-      border: 1px solid #ff33ff44;
-      transition: 0.25s;
-
-      word-wrap: break-word;
-      overflow-wrap: break-word;
+      background: rgba(26, 0, 51, 0.35);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 0, 255, 0.18);
+      border-radius: 16px;
+      padding: 24px 28px;
+      box-shadow: 
+        0 8px 32px rgba(0,0,0,0.5),
+        inset 0 0 20px rgba(255,0,255,0.08),
+        0 0 30px rgba(255,0,255,0.15);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    .card:hover {
-      box-shadow: 0 0 25px #ff00ff, 0 0 35px #ff33ff;
-      transform: scale(1.03);
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent, rgba(255,0,255,0.08), transparent);
+      opacity: 0;
+      transition: opacity 0.6s;
     }
 
-    .date {
-      font-size: 0.85rem;
-      margin-bottom: 6px;
-      color: #ff66ff;
-      text-shadow:0 0 6px #ff00ff;
+    .card:hover::before { opacity: 1; }
+
+    .card div:first-child {
+      font-size: 1.1rem;
+      color: #00ffff;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px #00ffff80;
+      letter-spacing: 1px;
     }
 
-    .title {
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #ff99ff;
-    }
-
-    .desc {
-      font-size: 0.95rem;
-      line-height: 1.4;
+    .card div:last-child {
+      font-size: 1.4rem;
       color: #ffccff;
+      text-shadow: 0 0 12px #ff00ff60;
     }
 
-    /* Нүүр хуудас руу буцах товчлуур */
-    #backBtn {
-      padding: 12px 30px;
-      font-size: 18px;
-      color: #ffccff;
-      background-color: #330033;
-      border: 2px solid #ff00ff;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 0 12px #ff00ff;
-      margin-top: 40px;
-    }
+    /* RESPONSIVE timeline */
+    @media (max-width: 768px) {
+      .timeline::before { 
+        left: 20px; 
+        transform: none;
+      }
 
-    #backBtn:hover {
-      background-color: #660066;
-      box-shadow: 0 0 25px #ff00ff, 0 0 35px #ff33ff;
-      transform: scale(1.05);
-    }
+      .entry {
+        width: 100%;
+        left: 0 !important;
+        padding: 30px 20px 30px 70px;
+        text-align: left;
+      }
 
-    /* Responsive */
-    @media (max-width: 700px) {
-      .timeline::before { left: 10px; }
-      .entry { width: 100%; padding-left: 40px; padding-right: 10px; }
-      .entry.left, .entry.right { left: 0; text-align: left; }
-      .entry::after { left: 0; top: 28px; right: auto; }
-      .card { max-width: calc(100% - 50px); }
+      .entry::after {
+        left: 8px !important;
+      }
+
+      h1 { font-size: 2.4rem; }
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Sandbox Timeline</h1>
+<div class="overlay" id="overlay"></div>
 
-  <div class="timeline">
+<nav>
+  <img src="548958509_1432405087846218_6406229560137543210_n.png" class="logo" alt="logo">
 
-    <div class="entry left">
-      <div class="card">
-        <div class="date">2025-11-01</div>
-        <div class="title">Үүсгэн байгуулсан</div>
-        <div class="desc">Энд урт текстийг туршиж үзэж байна, хэрвээ текст хэтэрвэл автоматаар шинэ мөр рүү орно.</div>
-      </div>
-    </div>
+  <div class="burger" id="burger">☰</div>
 
-    <div class="entry right">
-      <div class="card">
-        <div class="date">2025-11-10</div>
-        <div class="title">Би</div>
-        <div class="desc">Энд ч бас маш урт текст бичиж болно, текст card-ийн хэмжээнд тааруулан сунана.</div>
-      </div>
-    </div>
-
-    <div class="entry left">
-      <div class="card">
-        <div class="date">2025-11-20</div>
-        <div class="title">Сайн</div>
-        <div class="desc">Текстээ чөлөөтэй бичээд timeline дээр автоматаар сунгах боломжтой болсон.</div>
-      </div>
-    </div>
-
-  </div>
-  <div style="text-align:center;">
-    <button id="backBtn">← Нүүр хуудас руу буцах</button>
+  <div class="nav-links" id="navLinks">
+    <a href="#">Бидний тухай</a>
+    <a href="tusuluud.html">Төсөлүүд</a>
+    <a href="tex.html">Технологи</a>
+    <a href="#">Захиалга</a>
+    <a href="#">Санал</a>
+    <a href="#">Холбоо</a>
   </div>
 
-  <script>
-    document.getElementById("backBtn").addEventListener("click", () => {
-      window.location.href = "index.html";
-    });
-  </script>
+  <img src="profile.png" class="profile" alt="profile">
+</nav>
+
+<h1>Sandbox Timeline</h1>
+
+<div class="timeline">
+
+  <div class="entry left">
+    <div class="card">
+      <div>2025-11-01</div>
+      <div>Үүсгэн байгуулсан</div>
+      
+    </div>
+  </div>
+
+  <div class="entry right">
+    <div class="card">
+      <div>2025-11-10</div>
+      <div>Би</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const burger = document.getElementById("burger");
+  const navLinks = document.getElementById("navLinks");
+  const overlay = document.getElementById("overlay");
+
+  burger.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+    overlay.classList.toggle("active");
+  });
+
+  overlay.addEventListener("click", () => {
+    navLinks.classList.remove("active");
+    overlay.classList.remove("active");
+  });
+</script>
 
 </body>
 </html>

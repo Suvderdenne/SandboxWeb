@@ -83,6 +83,106 @@
         .card p { font-size: 0.9rem; line-height: 1.5; opacity: 0.9; }
 
     
+nav {
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 15px 0;
+
+  position: fixed;
+
+  top: 0;
+
+  left: 0;
+
+  width: 100%;
+
+  /* background: rgba(146, 141, 141, 0.3); */
+
+  backdrop-filter: blur(8px);
+
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+
+  z-index: 100;
+
+  gap: 20px;
+
+}
+
+
+
+nav a {
+
+  color: white;
+
+  text-decoration: none;
+
+  margin: 0 15px;
+
+  font-size: 16px;
+
+  border: 1px solid rgba(255,255,255,0.4);
+
+  padding: 6px 18px;
+
+  border-radius: 25px;
+
+  transition: 0.3s;
+
+}
+
+
+
+nav a:hover {
+
+  background-color: rgba(255,255,255,0.1);
+
+  color: #ffb6ff;
+
+}
+
+
+
+nav .logo {
+
+  position: absolute;
+
+  left: 80px;
+
+  height: 45px;
+
+  width: 60px;
+
+  height: 60px;
+
+}
+
+
+
+nav .profile {
+
+  position: absolute;
+
+  right: 25px;
+
+  height: 45px;
+
+  width: 45px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  border: 2px solid rgba(255,255,255,0.5);
+
+}
+
+
+
         .modal {
             display: none;
             position: fixed;
@@ -125,6 +225,45 @@
     </style>
 </head>
 <body>
+     <nav>
+
+    <a href="timeline.html">Бидний тухай</a>
+
+    <a href="tusuluud.html">Төсөлүүд</a>
+
+    <a href="tex.html">Технологи</a>
+
+    <a href="zahialga.html">Захиалга өгөх</a>
+
+    <a href="sandbox.html">Холбоо барих</a>
+
+    <a href="sandboxsanal.html">Санал хүсэлт</a>
+
+  </nav>
+
+
+
+<nav>
+
+  <img src="Mandakh.webp" class="logo">
+
+  <a href="timeline.html">Бидний тухай</a>
+
+  <a href="tusuluud.html">Төсөлүүд</a>
+
+  <a href="tex.html">Технологи</a>
+
+  <a href="zahialga.html">Захиалга өгөх</a>
+
+  <a href="sandboxsanal.html">Санал хүсэлт</a>
+
+  <a href="sandbox.html">Холбоо барих</a>
+
+  <img src="account_circle_24dp_5F6368_FILL0_wght400_GRAD0_opsz24 (1).svg" class="profile">
+
+</nav>
+
+
 
 <div class="container">
     <h2>🌈 FRONTEND ТЕХНОЛОГИ</h2>

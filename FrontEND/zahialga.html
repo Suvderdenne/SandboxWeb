@@ -4,61 +4,291 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Захиалга өгөх - SAND BOX</title>
-  <link rel="stylesheet" href="indexStyle.css">
-  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.77/build/spline-viewer.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", system-ui, -apple-system, sans-serif;
+      color: white;
+      background: linear-gradient(180deg, #0b0014, #2a0055, #5f00ff);
+      background-size: 100% 300%;
+      animation: bgScroll 25s ease-in-out infinite alternate;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    @keyframes bgScroll {
+      0% { background-position: top; }
+      100% { background-position: bottom; }
+    }
+
+    /* ==================== NAVIGATION ==================== */
+    nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px 5%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      z-index: 1000;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      padding: 8px 18px;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+
+    nav a:hover {
+      background-color: rgba(255,255,255,0.15);
+      color: #ffb6ff;
+    }
+
+    nav .logo {
+      position: absolute;
+      left: 5%;
+      height: 55px;
+      width: auto;
+    }
+
+    nav .profile {
+      position: absolute;
+      right: 5%;
+      height: 45px;
+      width: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.6);
+    }
+
+    /* ==================== ORDER SECTION ==================== */
+    .order-section {
+      min-height: 100vh;
+      padding: 120px 5% 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .order-container {
+      max-width: 620px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.09);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 28px;
+      padding: 50px 40px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+    }
+
+    .order-header {
+      text-align: center;
+      margin-bottom: 45px;
+    }
+
+    .order-header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      opacity: 0.95;
+    }
+
+    .order-header h2 {
+      font-size: 54px;
+      margin-bottom: 12px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .order-header h2 span {
+      color: #ff55ff;
+    }
+
+    .order-header p {
+      font-size: 19px;
+      opacity: 0.9;
+      line-height: 1.5;
+    }
+
+    /* ==================== FORM ==================== */
+    .order-form {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .order-form input,
+    .order-form textarea,
+    .order-form select {
+      padding: 16px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      font-size: 16.5px;
+      transition: all 0.3s ease;
+    }
+
+    .order-form input:focus,
+    .order-form textarea:focus,
+    .order-form select:focus {
+      border-color: #b72cff;
+      background: rgba(255, 255, 255, 0.15);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(183, 44, 255, 0.25);
+    }
+
+    .select-wrapper label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 17px;
+      opacity: 0.95;
+      color: white;
+    }
+
+    .select-things {
+      padding: 16px 20px;
+      border: 1px solid rgba(255, 112, 234, 0.3);
+      border-radius: 14px;
+      background: rgba(255, 250, 250, 0.08);
+      color: rgb(247, 57, 244);
+      font-size: 16.5px;
+      transition: all 0.3s ease;
+    }
+
+    .order-form button {
+      background: linear-gradient(135deg, #b72cff, #ff4ad9);
+      border: none;
+      color: white;
+      padding: 16px 40px;
+      border-radius: 30px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.4s ease;
+    }
+
+    .order-form button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 35px rgba(183, 44, 255, 0.55);
+    }
+
+    .order-note {
+      text-align: center;
+      margin-top: 35px;
+      font-size: 15.5px;
+      opacity: 0.85;
+    }
+
+    /* ==================== FOOTER ==================== */
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      background: rgba(0, 0, 0, 0.4);
+      font-size: 15px;
+      margin-top: 50px;
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      nav {
+        padding: 12px 5%;
+        gap: 12px;
+      }
+      
+      .order-container {
+        padding: 40px 25px;
+      }
+      
+      .order-header h2 {
+        font-size: 42px;
+      }
+      
+      .order-header p {
+        font-size: 17px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .order-header h2 {
+        font-size: 36px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
+  <!-- Navigation -->
   <nav>
-    <img src="c:\Users\shado\Downloads\548958509_1432405087846218_6406229560137543210_n (2).png" class="logo">
+    <img src="logo.png" class="logo" alt="SAND BOX Logo">
+    
     <a href="timeline.html">Бидний тухай</a>
     <a href="tusuluud.html">Төсөлүүд</a>
     <a href="tex.html">Технологи</a>
     <a href="zahialga.html">Захиалга өгөх</a>
     <a href="sandbox.html">Холбоо барих</a>
     <a href="sandboxsanal.html">Санал хүсэлт</a>
-    <img src="c:\Users\shado\Videos\zuragnuud\images (2).png" class="profile">
+    
+    <img src="profile.png" class="profile" alt="Profile">
   </nav>
 
-  <section class="hero">
-    <div class="hero-content">
-      <h1>ЗАХИАЛГА ӨГӨХ</h1>
-      <h2>SAND</h2>
-      <h3>BOX</h3>
-      <p>Таны төсөл, санааг хамтдаа хэрэгжүүлье!<br>Доорх маягтыг бөглөнө үү.</p>
+  <section class="order-section">
+    <div class="order-container">
+      <div class="order-header">
+        <h1>ЗАХИАЛГА ӨГӨХ</h1>
+        <h2>SAND <span>BOX</span></h2>
+        <p>Таны төсөл, санааг хамтдаа хэрэгжүүлье!<br>Доорх маягтыг бөглөнө үү.</p>
+      </div>
 
       <form class="order-form" action="#" method="post">
         <input type="text" placeholder="Таны нэр" required>
         <input type="tel" placeholder="Утасны дугаар" required>
         <input type="email" placeholder="И-мэйл хаяг" required>
-        <textarea placeholder="Төслийн тодорхойлолт / юу хийлгэх вэ? (илүү дэлгэрэнгүй бичвэл сайн)" rows="5" required></textarea>
         
-        <div style="margin: 15px 0;">
-          <label style="margin-right: 15px;">Ямар төрлийн ажил вэ?</label><br><br>
-          <select required style="color: white; background: #2a004a; border: 1px solid #b72cff;">
+        <textarea placeholder="Төслийн тодорхойлолт / юу хийлгэх вэ? (илүү дэлгэрэнгүй бичвэл сайн)" rows="6" required></textarea>
+        
+        <div class="select-wrapper">
+          <label>Ямар төрлийн ажил вэ?</label>
+          <select required>
+            <div class="select-things">
             <option value="" disabled selected>Сонгоно уу</option>
             <option>Вэбсайт хийх</option>
             <option>Лого, брэндинг</option>
             <option>3D загвар / Spline</option>
             <option>Апп хөгжүүлэлт</option>
+            <option>Сошиал медиа дизайн</option>
             <option>Бусад (доор тайлбарлана уу)</option>
+            </div>
           </select>
         </div>
 
-        <button type="submit">Илгээх</button>
+        <button type="submit">ЗАХИАЛГА ИЛГЭЭХ</button>
       </form>
 
-      <p style="margin-top: 25px; font-size: 18px; opacity: 0.9;">
-        Бид тантай хамгийн богино хугацаанд холбогдох болно!
-      </p>
+      <div class="order-note">
+        <p>Бид таны илгээсэн мэдээллийг хүлээн авмагц 24 цагийн дотор холбогдох болно.</p>
+      </div>
     </div>
-
-    <spline-viewer url="https://prod.spline.design/7T0jZyQONzZMozps/scene.splinecode"></spline-viewer>
   </section>
 
   <footer>
-    <p>© 2025 SAND BOX — Footer</p>
+    <p>© 2026 SAND BOX — MANDAKH UNIVERSITY</p>
   </footer>
 
 </body>

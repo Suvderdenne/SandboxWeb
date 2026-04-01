@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <title>ATM Demo</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        #balance {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🏧 ATM машин</h1>
+
+    <div id="balance"></div>
+
+    <input type="text" id="amount" placeholder="Мөнгө оруулна уу">
+    <br>
+    <button onclick="withdraw()">Мөнгө авах</button>
+
+    <script>
+        let balance = 1250000; // эхний үлдэгдэл
+
+        // Үлдэгдлийг харуулах функц
+        function showBalance() {
+            document.getElementById("balance").innerText =
+                "Үлдэгдэл: " + balance.toLocaleString() + "₮";
+        }
+
+        // Мөнгө авах функц
+        function withdraw() {
+            let input = document.getElementById("amount").value;
+
+            // Хэрвээ хэрэглэгч таслалтай бичвэл → арилгана
+            let cleanInput = input.replace(/,/g, "");
+
+            let amount = Number(cleanInput);
+
+            if (isNaN(amount) || amount <= 0) {
+                alert("Зөв дүн оруулна уу!");
+                return;
+            }
+
+            if (amount > balance) {
+                alert("Үлдэгдэл хүрэлцэхгүй!");
+                return;
+            }
+
+            balance -= amount;
+
+            showBalance();
+
+            document.getElementById("amount").value = "";
+        }
+
+        // Эхэнд үлдэгдлийг харуулах
+        showBalance();
+    </script>
+
+</body>
+</html>

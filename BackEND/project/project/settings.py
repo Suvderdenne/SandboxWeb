@@ -37,10 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app_user',
 ]
-
-AUTH_USER_MODEL = 'app_user.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -78,7 +75,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sandbox',
+        'NAME': 'sandboxDB',
         'USER': 'postgres',
         'PASSWORD': '123',
         'HOST': 'localhost',

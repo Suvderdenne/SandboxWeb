@@ -1,39 +1,63 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.admin import UserAdmin
+from django import forms
 from .models import User
 
-class CustomUserCreationForm(UserCreationForm):
+
+class CustomUserCreationForm(forms.ModelForm):
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
+
     class Meta:
         model = User
-        fields = ('phone_number', 'email')
+        fields = ('email', 'first_name', 'last_name', 'student_code', 'course', 'profile_image_base64')
 
-class CustomUserChangeForm(UserChangeForm):
+    def clean_password2(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError('Passwords do not match')
+
+        return password2
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password1'])
+        if commit:
+            user.save()
+        return user
+
+
+class CustomUserChangeForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('phone_number', 'email', 'first_name', 'last_name', 'is_verified', 'is_staff', 'is_superuser')
+        fields = '__all__'
 
-class UserAdmin(BaseUserAdmin):
-    form = CustomUserChangeForm
+
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
+    form = CustomUserChangeForm
     model = User
 
-    list_display = ('phone_number', 'email', 'is_verified', 'is_staff', 'is_superuser')
-    readonly_fields = ('created_at',)
-    ordering = ('phone_number',)  # username биш phone_number
+    list_display = ('email', 'first_name', 'last_name', 'student_code', 'course', 'is_staff', 'is_active')
+    list_filter = ('is_staff', 'is_active')
 
     fieldsets = (
-        (None, {'fields': ('phone_number', 'email', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'age', 'gender', 'course', 'major', 'student_code', 'skills')}),
-        ('Permissions', {'fields': ('is_verified','is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Important dates', {'fields': ('last_login', 'created_at')}),
+        (None, {'fields': ('email', 'password')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'student_code', 'course', 'profile_image_base64')}),
+        ('Permissions', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important Dates', {'fields': ('last_login', 'created_at')}),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('phone_number', 'email', 'password1', 'password2', 'is_staff', 'is_superuser')}
-        ),
+            'fields': ('email', 'first_name', 'last_name', 'student_code', 'course', 'profile_image_base64', 'password1', 'password2', 'is_staff', 'is_active'),
+        }),
     )
 
-admin.site.register(User, UserAdmin)
+    search_fields = ('email', 'first_name', 'last_name', 'student_code')
+    ordering = ('email',)
+    readonly_fields = ('created_at',)

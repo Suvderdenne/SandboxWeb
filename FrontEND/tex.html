@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вэб Технологиуд</title>
+    <title>Вэб Технологиуд </title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
-        /* --- CSS ХЭСЭГ --- */
         body {
             background-color: #521c74; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -39,7 +40,6 @@
             margin-bottom: 60px;
         }
 
-    
         .card {
             background: rgba(138, 43, 226, 0.4);
             padding: 25px;
@@ -52,7 +52,6 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        
         .card::before {
             content: '';
             position: absolute;
@@ -63,11 +62,17 @@
             border-radius: 0 5px 5px 0;
         }
 
-
         .card:hover {
             transform: translateY(-10px) scale(1.02);
             background: rgba(138, 43, 226, 0.6);
             box-shadow: 0 0 25px rgba(251, 250, 250, 0.967);
+        }
+
+
+        .card h3 i {
+            margin-right: 10px;
+            font-size: 1.6rem;
+            vertical-align: middle;
         }
 
         .orange::before { background: #ff7f50; }
@@ -81,6 +86,41 @@
 
         .card h3 { margin: 0 0 10px 0; color: #fff; font-size: 1.4rem; }
         .card p { font-size: 0.9rem; line-height: 1.5; opacity: 0.9; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #4b0082, #8a2be2);
+            margin: 10% auto;
+            padding: 40px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 25px;
+            text-align: center;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.5); 
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 30px;
+            cursor: pointer;
+            color: white;
+        }
 
     
 nav {
@@ -101,7 +141,7 @@ nav {
 
   width: 100%;
 
-  /* background: rgba(146, 141, 141, 0.3); */
+
 
   backdrop-filter: blur(8px);
 
@@ -148,76 +188,18 @@ nav a:hover {
 
 
 nav .logo {
-
-  position: absolute;
-
-  left: 80px;
-
-  height: 45px;
-
-  width: 60px;
-
-  height: 60px;
-
+    height: 40px;
+    width: 40;
+    position: static; 
 }
-
-
 
 nav .profile {
-
-  position: absolute;
-
-  right: 25px;
-
-  height: 45px;
-
-  width: 45px;
-
-  border-radius: 50%;
-
-  object-fit: cover;
-
-  border: 2px solid rgba(255,255,255,0.5);
-
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.5);
+    position: static; /* Давхардалтыг арилгах гол хэсэг */
 }
-
-
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, #4b0082, #8a2be2);
-            margin: 10% auto;
-            padding: 40px;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 25px;
-            text-align: center;
-            border: 2px solid #00ffff;
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.5);
-            position: relative;
-        }
-
-        .close-btn {
-            position: absolute;
-            right: 20px;
-            top: 15px;
-            font-size: 30px;
-            cursor: pointer;
-            color: white;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -225,7 +207,7 @@ nav .profile {
     </style>
 </head>
 <body>
-     <nav>
+    <nav>
 
     <a href="timeline.html">Бидний тухай</a>
 
@@ -264,24 +246,23 @@ nav .profile {
 </nav>
 
 
-
 <div class="container">
     <h2>🌈 FRONTEND ТЕХНОЛОГИ</h2>
     <div class="grid">
         <div class="card orange" onclick="showPopup('HTML', 'Вэб хуудасны бүтэц, контент, элементүүдийг тодорхойлдог үндсэн хэл. Энэ бол вэбийн араг яс юм.')">
-            <h3>HTML</h3>
+            <h3><i class="fab fa-html5"></i> HTML</h3>
             <p>Вэб хуудасны бүтэц, контент, элементүүдийг тодорхойлно.</p>
         </div>
         <div class="card blue" onclick="showPopup('CSS', 'Вэбийн өнгө, загвар, хөдөлгөөн, 3D эффект, байрлалыг тодорхойлно.')">
-            <h3>CSS</h3>
+            <h3><i class="fab fa-css3-alt"></i> CSS</h3>
             <p>Вэбийн өнгө, загвар, хөдөлгөөн, 3D эффект тодорхойлно.</p>
         </div>
         <div class="card yellow" onclick="showPopup('JavaScript', 'Хэрэглэгчийн харилцаа, динамик хөдөлгөөн, логикийг хариуцдаг хүчирхэг хэл.')">
-            <h3>JavaScript</h3>
+            <h3><i class="fab fa-js"></i> JavaScript</h3>
             <p>Хэрэглэгчийн харилцаа, динамик хөдөлгөөн хариуцна.</p>
         </div>
         <div class="card cyan" onclick="showPopup('React', 'Компонент суурьтай, хурдан интерфэйс бүтээдэг JavaScript framework.')">
-            <h3>React</h3>
+            <h3><i class="fab fa-react"></i> React</h3>
             <p>Компонент суурьтай JavaScript framework.</p>
         </div>
     </div>
@@ -289,19 +270,19 @@ nav .profile {
     <h2>⚙️ BACKEND ТЕХНОЛОГИ</h2>
     <div class="grid">
         <div class="card green" onclick="showPopup('Node.js', 'Сервер талд JavaScript ашиглах боломж олгодог runtime орчин.')">
-            <h3>Node.js</h3>
+            <h3><i class="fab fa-node-js"></i> Node.js</h3>
             <p>Сервер талд JavaScript ашиглах runtime орчин.</p>
         </div>
         <div class="card purple" onclick="showPopup('Express.js', 'Node.js дээр сервер ба API үүсгэхэд хамгийн түгээмэл framework.')">
-            <h3>Express.js</h3>
+            <h3><i class="fas fa-server"></i> Express.js</h3>
             <p>Node.js дээрх хамгийн түгээмэл framework.</p>
         </div>
         <div class="card dark-blue" onclick="showPopup('Python', 'Хурдан хөгжүүлэлт, өгөгдлийн удирдлагад тохиромжтой backend хэл.')">
-            <h3>Python</h3>
+            <h3><i class="fab fa-python"></i> Python</h3>
             <p>Django / Flask хөгжүүлэлтэд ашиглагддаг.</p>
         </div>
         <div class="card gold" onclick="showPopup('Database', 'Өгөгдлийг найдвартай хадгалах, хайх, удирдах серверийн хэсэг.')">
-            <h3>Database</h3>
+            <h3><i class="fas fa-database"></i> Database</h3>
             <p>MySQL / MongoDB өгөгдлийн сангууд.</p>
         </div>
     </div>
@@ -317,7 +298,6 @@ nav .profile {
 </div>
 
 <script>
- 
     function showPopup(title, text) {
         document.getElementById('popTitle').innerText = title;
         document.getElementById('popText').innerText = text;
@@ -328,7 +308,6 @@ nav .profile {
         document.getElementById('popupModal').style.display = "none";
     }
 
-    // Цонхны гадна талд дарвал хаах
     window.onclick = function(event) {
         let modal = document.getElementById('popupModal');
         if (event.target == modal) {

@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRYSTAL QUIZ — 3D</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@200;400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  overflow:hidden;
+  background:#000;
+  font-family:'Exo 2',sans-serif;
+  cursor:none;
+}
+canvas#bg{position:fixed;inset:0;z-index:0}
+
+/* CUSTOM CURSOR */
+#cursor{
+  position:fixed;width:24px;height:24px;pointer-events:none;z-index:999;
+  transform:translate(-50%,-50%);transition:transform .1s;
+}
+#cursor svg{width:100%;height:100%}
+#cursor.aim{transform:translate(-50%,-50%) scale(1.4)}
+
+/* ========== INTRO ========== */
+#intro{
+  position:fixed;inset:0;z-index:50;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at center, #0a0520 0%, #000 70%);
+  transition:opacity 1s ease;
+}
+#intro.out{opacity:0;pointer-events:none}
+
+.intro-logo{
+  position:relative;margin-bottom:48px;text-align:center;
+}
+.intro-logo .line1{
+  font-size:clamp(48px,8vw,96px);font-weight:900;letter-spacing:8px;
+  background:linear-gradient(135deg,#a78bfa,#60a5fa,#34d399);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 30px #7c3aed80);
+  animation:logoGlow 3s ease-in-out infinite alternate;
+}
+.intro-logo .line2{
+  font-size:clamp(14px,2vw,18px);font-family:'Share Tech Mono',monospace;
+  letter-spacing:12px;color:#7c3aed;margin-top:4px;
+  animation:fadeInUp .8s .3s both;
+}
+@keyframes logoGlow{from{filter:drop-shadow(0 0 20px #7c3aed60)}to{filter:drop-shadow(0 0 60px #7c3aedaa)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.crystal-preview{
+  width:120px;height:120px;position:relative;margin:0 auto 40px;
+  animation:spinSlow 8s linear infinite;
+}
+@keyframes spinSlow{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+.crystal-preview svg{width:100%;height:100%;filter:drop-shadow(0 0 20px #7c3aed)}
+
+.start-btn{
+  position:relative;padding:18px 64px;border:none;border-radius:4px;
+  background:transparent;cursor:pointer;font-family:'Exo 2',sans-serif;
+  font-size:18px;font-weight:700;letter-spacing:6px;color:white;
+  text-transform:uppercase;overflow:hidden;
+  animation:fadeInUp .6s .6s both;
+}
+.start-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,#7c3aed,#3b82f6,#10b981);
+  border-radius:4px;opacity:0.9;transition:opacity .3s;
+}
+.start-btn::after{
+  content:'';position:absolute;inset:-2px;
+  background:linear-gradient(135deg,#a78bfa,#60a5fa,#34d399);
+  border-radius:6px;z-index:-1;filter:blur(8px);opacity:0.5;
+}
+.start-btn span{position:relative;z-index:1}
+.start-btn:hover::before{opacity:1}
+.start-btn:hover{transform:scale(1.03)}
+
+/* ========== HUD ========== */
+#hud{position:fixed;inset:0;z-index:20;pointer-events:none}
+
+.hud-top{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:20px 28px;
+}
+.hud-card{
+  background:rgba(10,5,30,0.7);backdrop-filter:blur(16px);
+  border:1px solid rgba(124,58,237,0.3);border-radius:12px;
+  padding:12px 20px;min-width:130px;
+}
+.hud-label{
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  letter-spacing:3px;color:#7c3aed;text-transform:uppercase;margin-bottom:4px;
+}
+.hud-val{
+  font-family:'Share Tech Mono',monospace;font-size:28px;font-weight:700;
+  color:white;line-height:1;
+}
+#score-val{background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+.hud-center{text-align:center}
+.hud-title{
+  font-size:13px;font-weight:700;letter-spacing:6px;
+  color:rgba(255,255,255,0.3);text-transform:uppercase;
+}
+
+/* TIMER BAR */
+.timer-wrap{
+  position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:rgba(255,255,255,0.05);
+}
+#timer-fill{
+  height:100%;background:linear-gradient(90deg,#7c3aed,#3b82f6,#10b981);
+  width:100%;transition:width 1s linear;
+  box-shadow:0 0 12px rgba(124,58,237,0.8);
+}
+
+/* COMBO BADGE */
+#combo-badge{
+  position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:25;
+  font-family:'Share Tech Mono',monospace;text-align:center;
+  opacity:0;transition:opacity .3s, transform .3s;pointer-events:none;
+}
+#combo-badge.show{opacity:1;transform:translateX(-50%) scale(1.05)}
+.combo-x{font-size:11px;letter-spacing:4px;color:#7c3aed}
+.combo-num{font-size:40px;font-weight:900;color:white;line-height:1;
+  text-shadow:0 0 30px #7c3aed;}
+
+/* CROSSHAIR */
+#xhair{
+  position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%);z-index:20;
+  pointer-events:none;transition:transform .2s, opacity .2s;
+}
+#xhair.pulse{transform:translate(-50%,-50%) scale(1.5)}
+
+/* ========== QUIZ PANEL ========== */
+#quiz-panel{
+  position:fixed;bottom:0;left:0;right:0;z-index:30;
+  display:flex;justify-content:center;align-items:flex-end;
+  pointer-events:none;
+}
+#quiz-inner{
+  width:min(760px,97vw);
+  background:rgba(6,3,20,0.92);backdrop-filter:blur(24px);
+  border:1px solid rgba(124,58,237,0.4);
+  border-bottom:none;border-radius:24px 24px 0 0;
+  padding:28px 32px 36px;
+  transform:translateY(100%);transition:transform .5s cubic-bezier(.16,1,.3,1);
+  pointer-events:all;
+  box-shadow:0 -20px 80px rgba(124,58,237,0.2),inset 0 1px 0 rgba(124,58,237,0.3);
+}
+#quiz-inner.open{transform:translateY(0)}
+
+.q-meta{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;
+}
+.q-tag{
+  font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;
+  color:#7c3aed;background:rgba(124,58,237,0.1);
+  border:1px solid rgba(124,58,237,0.3);border-radius:20px;padding:4px 12px;
+}
+.q-prog{display:flex;gap:5px}
+.q-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:background .3s}
+.q-dot.done{background:#7c3aed}
+.q-dot.active{background:white}
+
+#question-text{
+  font-size:clamp(16px,2.5vw,22px);font-weight:700;color:white;
+  line-height:1.4;margin-bottom:24px;min-height:60px;
+}
+
+.choices-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.choice{
+  position:relative;padding:14px 18px;border-radius:12px;cursor:pointer;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  font-family:'Exo 2',sans-serif;font-size:15px;font-weight:500;color:rgba(255,255,255,0.85);
+  text-align:left;transition:all .2s;overflow:hidden;
+}
+.choice::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(59,130,246,0.1));
+  opacity:0;transition:opacity .2s;
+}
+.choice:hover::before{opacity:1}
+.choice:hover{border-color:rgba(124,58,237,0.5);color:white;transform:translateY(-1px)}
+.choice .letter{
+  display:inline-block;width:24px;height:24px;border-radius:6px;
+  background:rgba(124,58,237,0.2);border:1px solid rgba(124,58,237,0.4);
+  font-family:'Share Tech Mono',monospace;font-size:12px;
+  text-align:center;line-height:24px;color:#a78bfa;
+  margin-right:10px;flex-shrink:0;
+}
+.choice.correct{
+  background:rgba(16,185,129,0.15);border-color:#10b981;color:#6ee7b7;
+  box-shadow:0 0 24px rgba(16,185,129,0.3);
+}
+.choice.correct .letter{background:rgba(16,185,129,0.2);border-color:#10b981;color:#10b981}
+.choice.wrong{
+  background:rgba(239,68,68,0.15);border-color:#ef4444;color:#fca5a5;
+  box-shadow:0 0 24px rgba(239,68,68,0.3);
+}
+.choice.wrong .letter{background:rgba(239,68,68,0.2);border-color:#ef4444;color:#ef4444}
+.choice:disabled,.choice[disabled]{cursor:default;transform:none}
+
+#feedback-bar{
+  height:32px;display:flex;align-items:center;justify-content:center;
+  font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:3px;
+  transition:all .3s;
+}
+#feedback-bar.correct{color:#10b981;text-shadow:0 0 16px #10b981}
+#feedback-bar.wrong{color:#ef4444;text-shadow:0 0 16px #ef4444}
+
+/* ========== SCORE POP ========== */
+.spop{
+  position:fixed;z-index:40;font-family:'Share Tech Mono',monospace;
+  font-size:26px;font-weight:700;pointer-events:none;
+  animation:spopAnim 1.4s ease-out forwards;
+}
+@keyframes spopAnim{
+  0%{opacity:1;transform:translateY(0) scale(1)}
+  60%{opacity:1;transform:translateY(-50px) scale(1.2)}
+  100%{opacity:0;transform:translateY(-100px) scale(0.9)}
+}
+
+/* ========== GAME OVER ========== */
+#gameover{
+  position:fixed;inset:0;z-index:60;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);
+}
+#gameover.show{display:flex}
+.go-inner{
+  text-align:center;padding:52px 64px;position:relative;
+  background:rgba(6,3,20,0.95);
+  border:1px solid rgba(124,58,237,0.3);border-radius:24px;
+  box-shadow:0 0 80px rgba(124,58,237,0.2);
+  animation:fadeInUp .5s ease;
+}
+.go-inner::before{
+  content:'';position:absolute;inset:-1px;border-radius:25px;
+  background:linear-gradient(135deg,rgba(124,58,237,0.4),rgba(59,130,246,0.2),rgba(16,185,129,0.2));
+  z-index:-1;
+}
+.go-title{
+  font-size:14px;letter-spacing:8px;color:#7c3aed;
+  font-family:'Share Tech Mono',monospace;margin-bottom:8px;
+}
+.go-score{
+  font-family:'Share Tech Mono',monospace;font-size:72px;font-weight:700;
+  background:linear-gradient(135deg,#a78bfa,#60a5fa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;margin:16px 0;
+}
+.go-msg{color:rgba(255,255,255,0.5);font-size:15px;letter-spacing:2px;margin-bottom:36px}
+.go-stats{
+  display:flex;gap:24px;justify-content:center;margin-bottom:32px;
+}
+.go-stat{text-align:center}
+.go-stat-val{font-family:'Share Tech Mono',monospace;font-size:28px;color:white}
+.go-stat-label{font-size:11px;letter-spacing:2px;color:rgba(255,255,255,0.3);margin-top:2px}
+.restart-btn{
+  background:transparent;border:1px solid rgba(124,58,237,0.5);
+  border-radius:8px;padding:14px 44px;cursor:pointer;
+  font-family:'Exo 2',sans-serif;font-size:14px;font-weight:700;
+  letter-spacing:4px;color:white;text-transform:uppercase;
+  transition:all .3s;position:relative;overflow:hidden;
+}
+.restart-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(59,130,246,0.2));
+  opacity:0;transition:opacity .3s;
+}
+.restart-btn:hover::before{opacity:1}
+.restart-btn:hover{border-color:rgba(124,58,237,0.9);box-shadow:0 0 30px rgba(124,58,237,0.4)}
+
+/* CONTROLS */
+#controls{
+  position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+  z-index:15;display:flex;gap:8px;opacity:0.4;pointer-events:none;
+  transition:opacity .3s;
+}
+#controls.hide{opacity:0}
+.kbtn{
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);
+  border-radius:6px;padding:5px 10px;color:rgba(255,255,255,0.6);letter-spacing:1px;
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<!-- Custom cursor -->
+<div id="cursor">
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="4" stroke="#a78bfa" stroke-width="1.5"/>
+    <path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>
+</div>
+
+<!-- Crosshair -->
+<div id="xhair">
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+    <circle cx="16" cy="16" r="5" stroke="rgba(167,139,250,0.8)" stroke-width="1.5"/>
+    <circle cx="16" cy="16" r="1.5" fill="#a78bfa"/>
+    <line x1="16" y1="2" x2="16" y2="10" stroke="rgba(167,139,250,0.6)" stroke-width="1.5"/>
+    <line x1="16" y1="22" x2="16" y2="30" stroke="rgba(167,139,250,0.6)" stroke-width="1.5"/>
+    <line x1="2" y1="16" x2="10" y2="16" stroke="rgba(167,139,250,0.6)" stroke-width="1.5"/>
+    <line x1="22" y1="16" x2="30" y2="16" stroke="rgba(167,139,250,0.6)" stroke-width="1.5"/>
+  </svg>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-top">
+    <div class="hud-card">
+      <div class="hud-label">Оноо</div>
+      <div class="hud-val"><span id="score-val">0</span></div>
+    </div>
+    <div class="hud-card hud-center">
+      <div class="hud-title">Crystal Quiz</div>
+      <div class="hud-label" style="margin-top:4px;letter-spacing:2px">WASD хөдлөх • CLICK асуулт</div>
+    </div>
+    <div class="hud-card" style="text-align:right">
+      <div class="hud-label">Цаг</div>
+      <div class="hud-val" id="time-val">60</div>
+    </div>
+  </div>
+  <div class="timer-wrap"><div id="timer-fill"></div></div>
+</div>
+
+<!-- Combo -->
+<div id="combo-badge">
+  <div class="combo-x">COMBO</div>
+  <div class="combo-num" id="combo-num">×2</div>
+</div>
+
+<!-- Quiz panel -->
+<div id="quiz-panel">
+  <div id="quiz-inner">
+    <div class="q-meta">
+      <div class="q-tag" id="q-tag">АСУУЛТ 1</div>
+      <div class="q-prog" id="q-prog"></div>
+    </div>
+    <div id="question-text"></div>
+    <div class="choices-grid" id="choices"></div>
+    <div id="feedback-bar"></div>
+  </div>
+</div>
+
+<!-- Game Over -->
+<div id="gameover">
+  <div class="go-inner">
+    <div class="go-title">ТОГЛООМ ДУУСЛАА</div>
+    <div class="go-score" id="go-score">0</div>
+    <div class="go-msg" id="go-msg">Сайн тоглолоо!</div>
+    <div class="go-stats">
+      <div class="go-stat"><div class="go-stat-val" id="go-correct">0</div><div class="go-stat-label">ЗӨВ</div></div>
+      <div class="go-stat"><div class="go-stat-val" id="go-combo">×1</div><div class="go-stat-label">МАХ COMBO</div></div>
+      <div class="go-stat"><div class="go-stat-val" id="go-total">0</div><div class="go-stat-label">НИЙТ</div></div>
+    </div>
+    <button class="restart-btn" onclick="restartGame()">↺ ДАХИН ТОГЛОХ</button>
+  </div>
+</div>
+
+<!-- Controls hint -->
+<div id="controls">
+  <span class="kbtn">W A S D</span>
+  <span class="kbtn">↑↓←→</span>
+  <span class="kbtn">MOUSE эргүүлэх</span>
+  <span class="kbtn">CLICK / E асуулт</span>
+</div>
+
+<!-- Intro -->
+<div id="intro">
+  <div class="intro-logo">
+    <div class="line1">CRYSTAL QUIZ</div>
+    <div class="line2">3D EDITION</div>
+  </div>
+  <div class="crystal-preview">
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="60,10 100,40 90,90 30,90 20,40" fill="rgba(124,58,237,0.3)" stroke="#7c3aed" stroke-width="1.5"/>
+      <polygon points="60,10 100,40 60,60" fill="rgba(59,130,246,0.2)" stroke="#3b82f6" stroke-width="1"/>
+      <polygon points="60,10 20,40 60,60" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="1"/>
+      <polygon points="100,40 90,90 60,60" fill="rgba(124,58,237,0.15)" stroke="#7c3aed" stroke-width="1"/>
+      <polygon points="20,40 30,90 60,60" fill="rgba(59,130,246,0.15)" stroke="#3b82f6" stroke-width="1"/>
+      <polygon points="90,90 30,90 60,60" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1"/>
+      <circle cx="60" cy="60" r="3" fill="#a78bfa"/>
+    </svg>
+  </div>
+  <button class="start-btn" onclick="startGame()"><span>▶ ЭХЛЭХ</span></button>
+</div>
+
+<script>
+// =====================================================
+//  THREE.JS SCENE — Crystal World
+// =====================================================
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x020010, 0.018);
+
+const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.1, 300);
+camera.position.set(0, 2, 16);
+
+const renderer = new THREE.WebGLRenderer({
+  canvas: document.getElementById('bg'),
+  antialias: true,
+  alpha: false
+});
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setClearColor(0x020010);
+
+// ---- LIGHTS ----
+scene.add(new THREE.AmbientLight(0x110033, 1));
+
+const lights = [
+  {color:0x7c3aed, pos:[0,15,0], i:3, d:80},
+  {color:0x3b82f6, pos:[-20,8,-15], i:2, d:60},
+  {color:0x10b981, pos:[20,5,10], i:1.5, d:50},
+  {color:0xf472b6, pos:[0,-5,20], i:1, d:40},
+];
+const sceneLights = lights.map(l=>{
+  const pl = new THREE.PointLight(l.color, l.i, l.d);
+  pl.position.set(...l.pos);
+  scene.add(pl);
+  return pl;
+});
+
+// ---- FLOOR GRID ----
+const gridHelper = new THREE.GridHelper(200, 50, 0x7c3aed, 0x1e1040);
+gridHelper.position.y = -3;
+gridHelper.material.opacity = 0.25;
+gridHelper.material.transparent = true;
+scene.add(gridHelper);
+
+// ---- CRYSTAL TARGETS ----
+function makeCrystal(color, emissive){
+  const group = new THREE.Group();
+  
+  // Main crystal (octahedron)
+  const geo = new THREE.OctahedronGeometry(1.3, 0);
+  const mat = new THREE.MeshPhongMaterial({
+    color, emissive, emissiveIntensity:0.4,
+    transparent:true, opacity:0.85,
+    shininess:120, specular:0xffffff
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  group.add(mesh);
+
+  // Inner glow crystal
+  const innerMat = new THREE.MeshPhongMaterial({
+    color: 0xffffff, emissive: color,
+    emissiveIntensity:0.8, transparent:true, opacity:0.3,
+    shininess:200
+  });
+  const inner = new THREE.Mesh(new THREE.OctahedronGeometry(0.9, 0), innerMat);
+  group.add(inner);
+
+  // Orbiting ring
+  const ringGeo = new THREE.TorusGeometry(2.0, 0.04, 8, 48);
+  const ringMat = new THREE.MeshBasicMaterial({color, transparent:true, opacity:0.5});
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = Math.PI/3;
+  group.add(ring);
+
+  // Second ring
+  const ring2 = new THREE.Mesh(
+    new THREE.TorusGeometry(1.6, 0.03, 8, 48),
+    new THREE.MeshBasicMaterial({color, transparent:true, opacity:0.3})
+  );
+  ring2.rotation.x = -Math.PI/4;
+  ring2.rotation.z = Math.PI/4;
+  group.add(ring2);
+
+  // Floating label plane
+  const labelGeo = new THREE.PlaneGeometry(1.5, 0.5);
+  const labelMat = new THREE.MeshBasicMaterial({
+    color, transparent:true, opacity:0.6, side:THREE.DoubleSide
+  });
+  const label = new THREE.Mesh(labelGeo, labelMat);
+  label.position.y = 2.2;
+  group.add(label);
+
+  group.userData.mesh = mesh;
+  group.userData.inner = inner;
+  group.userData.ring = ring;
+  group.userData.ring2 = ring2;
+  return group;
+}
+
+const crystalColors = [
+  [0x8b5cf6, 0x4c1d95],
+  [0x3b82f6, 0x1e3a8a],
+  [0x10b981, 0x064e3b],
+  [0xf59e0b, 0x78350f],
+  [0xec4899, 0x831843],
+  [0x06b6d4, 0x0e7490],
+  [0xa3e635, 0x3d6b00],
+  [0xf97316, 0x7c2d12],
+];
+
+const crystals = [];
+const CRYSTAL_COUNT = 8;
+for(let i=0;i<CRYSTAL_COUNT;i++){
+  const angle = (i/CRYSTAL_COUNT)*Math.PI*2;
+  const r = 14;
+  const [c,e] = crystalColors[i];
+  const crystal = makeCrystal(c, e);
+  crystal.position.set(
+    Math.cos(angle)*r,
+    Math.sin(i*0.7)*2.5,
+    Math.sin(angle)*r
+  );
+  crystal.userData.baseY = crystal.position.y;
+  crystal.userData.baseAngle = angle;
+  crystal.userData.idx = i;
+  scene.add(crystal);
+  crystals.push(crystal);
+}
+
+// ---- PARTICLE SYSTEMS ----
+// Main ambient particles
+function makeParticles(count, spread, color, size){
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(count*3);
+  for(let i=0;i<count;i++){
+    pos[i*3]   = (Math.random()-0.5)*spread;
+    pos[i*3+1] = (Math.random()-0.5)*(spread*0.3);
+    pos[i*3+2] = (Math.random()-0.5)*spread;
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  const mat = new THREE.PointsMaterial({color, size, transparent:true, opacity:0.6, sizeAttenuation:true});
+  return new THREE.Points(geo, mat);
+}
+const dust1 = makeParticles(500, 120, 0x7c3aed, 0.12);
+const dust2 = makeParticles(300, 80, 0x3b82f6, 0.08);
+const dust3 = makeParticles(200, 60, 0x10b981, 0.1);
+scene.add(dust1, dust2, dust3);
+
+// Rising rune particles (vertical)
+const runeGeo = new THREE.BufferGeometry();
+const runeCount = 120;
+const runePos = new Float32Array(runeCount*3);
+const runeVel = new Float32Array(runeCount);
+for(let i=0;i<runeCount;i++){
+  runePos[i*3] = (Math.random()-0.5)*80;
+  runePos[i*3+1] = (Math.random()-0.5)*20;
+  runePos[i*3+2] = (Math.random()-0.5)*80;
+  runeVel[i] = 0.02 + Math.random()*0.04;
+}
+runeGeo.setAttribute('position', new THREE.BufferAttribute(runePos,3));
+const runeMat = new THREE.PointsMaterial({color:0xa78bfa, size:0.3, transparent:true, opacity:0.4});
+const runePoints = new THREE.Points(runeGeo, runeMat);
+scene.add(runePoints);
+
+// ---- BACKGROUND ARCHITECTURE ----
+// Floating crystal pillars in bg
+for(let i=0;i<12;i++){
+  const angle = (i/12)*Math.PI*2;
+  const r = 35 + Math.random()*15;
+  const h = 10 + Math.random()*20;
+  const pillar = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.2, 0.4, h, 6),
+    new THREE.MeshPhongMaterial({
+      color:crystalColors[i%crystalColors.length][0],
+      transparent:true, opacity:0.3, shininess:60
+    })
+  );
+  pillar.position.set(Math.cos(angle)*r, -3+h/2, Math.sin(angle)*r);
+  scene.add(pillar);
+}
+
+// Outer ring structures
+for(let j=0;j<3;j++){
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(28+j*6, 0.15, 8, 100),
+    new THREE.MeshBasicMaterial({
+      color:[0x7c3aed,0x3b82f6,0x10b981][j],
+      transparent:true, opacity:0.15-j*0.04
+    })
+  );
+  ring.rotation.x = Math.PI/2;
+  ring.position.y = -3;
+  scene.add(ring);
+}
+
+// ---- PLAYER ----
+const player = new THREE.Group();
+
+// Suit body
+const bodyMat = new THREE.MeshPhongMaterial({color:0x1a0a3e, shininess:80, specular:0x7c3aed});
+const body = new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.32,1.2,12), bodyMat);
+body.position.y = 0.6;
+player.add(body);
+
+// Chest crystal
+const chestCrystal = new THREE.Mesh(
+  new THREE.OctahedronGeometry(0.2,0),
+  new THREE.MeshPhongMaterial({color:0xa78bfa, emissive:0x7c3aed, emissiveIntensity:1, transparent:true, opacity:0.9})
+);
+chestCrystal.position.set(0, 0.7, 0.35);
+player.add(chestCrystal);
+
+// Head helmet
+const helmet = new THREE.Mesh(
+  new THREE.SphereGeometry(0.36, 16, 12),
+  new THREE.MeshPhongMaterial({color:0x0f0520, shininess:120, specular:0xffffff})
+);
+helmet.position.y = 1.72;
+player.add(helmet);
+
+// Visor
+const visor = new THREE.Mesh(
+  new THREE.SphereGeometry(0.32, 12, 8, 0, Math.PI*2, 0.15, 1.1),
+  new THREE.MeshPhongMaterial({color:0xa78bfa, emissive:0x7c3aed, emissiveIntensity:0.8, transparent:true, opacity:0.7, shininess:200})
+);
+visor.position.y = 1.8;
+visor.rotation.x = 0.2;
+player.add(visor);
+
+// Shoulder pads
+[-0.55, 0.55].forEach(x=>{
+  const sh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.22,10,8),
+    new THREE.MeshPhongMaterial({color:0x2d1f5e, shininess:60})
+  );
+  sh.position.set(x,0.95,0);
+  sh.scale.set(1,0.7,0.9);
+  player.add(sh);
+  
+  // Shoulder gem
+  const gem = new THREE.Mesh(
+    new THREE.OctahedronGeometry(0.08,0),
+    new THREE.MeshPhongMaterial({color:0xa78bfa, emissive:0x7c3aed, emissiveIntensity:1})
+  );
+  gem.position.set(x,1.1,0);
+  player.add(gem);
+});
+
+// Arms
+const armMat = new THREE.MeshPhongMaterial({color:0x1a0a3e, shininess:40});
+const arms = [];
+[-0.65, 0.65].forEach((x,i)=>{
+  const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.1,0.75,8), armMat.clone());
+  arm.position.set(x, 0.55, 0);
+  arm.rotation.z = x>0 ? -0.35 : 0.35;
+  arm.userData.baseZ = arm.rotation.z;
+  arm.userData.side = i;
+  player.add(arm);
+  arms.push(arm);
+});
+
+// Legs
+[-0.22, 0.22].forEach(x=>{
+  const leg = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.16,0.12,0.85,8),
+    new THREE.MeshPhongMaterial({color:0x120730, shininess:30})
+  );
+  leg.position.set(x,-0.2,0);
+  player.add(leg);
+});
+
+// Player glow
+const playerGlow = new THREE.PointLight(0x7c3aed, 1.5, 8);
+player.add(playerGlow);
+
+scene.add(player);
+
+// ---- MOVEMENT ----
+const keys = {};
+document.addEventListener('keydown', e=>{ keys[e.key.toLowerCase()]=true; });
+document.addEventListener('keyup',   e=>{ keys[e.key.toLowerCase()]=false; });
+
+let camYaw = 0, camPitch = 0.1;
+let isLocked = false;
+let gameActive = false;
+
+document.addEventListener('pointerlockchange', ()=>{
+  isLocked = document.pointerLockElement === renderer.domElement;
+});
+document.addEventListener('mousemove', e=>{
+  if(!isLocked) return;
+  camYaw   -= e.movementX * 0.0025;
+  camPitch -= e.movementY * 0.002;
+  camPitch  = Math.max(-0.55, Math.min(0.55, camPitch));
+});
+
+// Custom cursor follow
+document.addEventListener('mousemove', e=>{
+  const el = document.getElementById('cursor');
+  el.style.left = e.clientX+'px';
+  el.style.top  = e.clientY+'px';
+});
+
+renderer.domElement.addEventListener('click', ()=>{
+  if(!gameActive) return;
+  if(!isLocked){ renderer.domElement.requestPointerLock(); return; }
+  shoot();
+});
+document.addEventListener('keydown', e=>{
+  if(e.key.toLowerCase()==='e' && gameActive) shoot();
+});
+
+// ---- RAYCASTER ----
+const raycaster = new THREE.Raycaster();
+function shoot(){
+  if(quizOpen) return;
+  raycaster.setFromCamera({x:0,y:0}, camera);
+  const hits = raycaster.intersectObjects(crystals, true);
+  if(hits.length){
+    let obj = hits[0].object;
+    let tries = 0;
+    while(!crystals.includes(obj) && obj.parent && tries++<5) obj=obj.parent;
+    if(crystals.includes(obj)){
+      triggerCrystalHit(obj);
+      openQuiz(obj.userData.idx % questions.length);
+    }
+  }
+}
+
+function triggerCrystalHit(crystal){
+  crystal.scale.set(1.4,1.4,1.4);
+  setTimeout(()=>{ crystal.scale.set(1,1,1); }, 300);
+  // Spawn burst particles at crystal location
+  spawnBurst(crystal.position.clone());
+}
+
+// Burst effect
+function spawnBurst(pos){
+  const burstGeo = new THREE.BufferGeometry();
+  const n = 30;
+  const bPos = new Float32Array(n*3);
+  const vel = [];
+  for(let i=0;i<n;i++){
+    bPos[i*3]=pos.x; bPos[i*3+1]=pos.y; bPos[i*3+2]=pos.z;
+    vel.push({x:(Math.random()-0.5)*0.3, y:Math.random()*0.2, z:(Math.random()-0.5)*0.3});
+  }
+  burstGeo.setAttribute('position', new THREE.BufferAttribute(bPos,3));
+  const burstMat = new THREE.PointsMaterial({color:0xa78bfa, size:0.25, transparent:true, opacity:1});
+  const burst = new THREE.Points(burstGeo, burstMat);
+  scene.add(burst);
+  let frame = 0;
+  const animate = ()=>{
+    frame++;
+    const p = burst.geometry.attributes.position.array;
+    for(let i=0;i<n;i++){
+      p[i*3]  +=vel[i].x; p[i*3+1]+=vel[i].y; p[i*3+2]+=vel[i].z;
+      vel[i].y-=0.008;
+    }
+    burst.geometry.attributes.position.needsUpdate=true;
+    burstMat.opacity = 1 - frame/40;
+    if(frame<40) requestAnimationFrame(animate);
+    else scene.remove(burst);
+  };
+  animate();
+}
+
+// =====================================================
+//  QUIZ DATA & LOGIC
+// =====================================================
+const questions = [
+  {q:"Монгол улсын нийслэл хот аль нь вэ?",      c:["Улаанбаатар","Дархан","Эрдэнэт","Сүхбаатар"], a:0},
+  {q:"5 × 7 = ?",                                  c:["32","35","30","42"], a:1},
+  {q:"Дэлхийн хамгийн том далай аль нь вэ?",       c:["Атлантын","Хойд мөсөн","Энэтхэгийн","Номхон"], a:3},
+  {q:"Монголын Эзэнт Гүрнийг үндэслэгч хэн вэ?",  c:["Угэдэй хаан","Тулуй","Чингис хаан","Хубилай хаан"], a:2},
+  {q:"√144 = ?",                                   c:["11","12","13","14"], a:1},
+  {q:"Дэлхийн хамгийн өндөр уул аль нь вэ?",      c:["K2","Эверест","Канченжунга","Лхоцзе"], a:1},
+  {q:"Нарны аймгийн хэдэн гариг байдаг вэ?",      c:["7","8","9","10"], a:1},
+  {q:"H₂O гэдэг нь юуны томьёо вэ?",              c:["Давс","Спирт","Ус","Хүчилтөрөгч"], a:2},
+  {q:"12 × 12 = ?",                                c:["124","136","144","148"], a:2},
+  {q:"Монгол улсын мөнгөн тэмдэгтийн нэр?",       c:["Юань","Вон","Төгрөг","Рубль"], a:2},
+  {q:"Гэрэлтүүлгийн хурд ойролцоогоор хэд вэ?",   c:["200,000 км/с","300,000 км/с","400,000 км/с","150,000 км/с"], a:1},
+  {q:"Дэлхийн хамгийн том улс аль нь вэ?",        c:["Канад","Хятад","АНУ","Орос"], a:3},
+  {q:"Хүний биед хэдэн яс байдаг вэ?",            c:["186","206","216","226"], a:1},
+  {q:"1+2+3+...+10 = ?",                           c:["45","50","55","60"], a:2},
+  {q:"DNA гэдэг нь юуны товчлол вэ?",             c:["Дезоксирибонуклейн хүчил","Диоксин нуклейн","Дирибо нуклейн","Дезоксин нуклейн"], a:0},
+];
+
+let score=0, timeLeft=60, combo=1, maxCombo=1;
+let correctCount=0, totalAsked=0;
+let quizOpen=false, answered=false, currentQ=-1;
+let timerInt=null, gameActive2=false;
+const asked = new Set();
+
+function buildQProgress(){
+  const d = document.getElementById('q-prog');
+  d.innerHTML='';
+  questions.forEach((_,i)=>{
+    const dot = document.createElement('div');
+    dot.className = 'q-dot' + (asked.has(i)?' done':'') + (i===currentQ?' active':'');
+    d.appendChild(dot);
+  });
+}
+
+function openQuiz(qIdx){
+  if(quizOpen) return;
+  quizOpen=true; answered=false; currentQ=qIdx;
+  totalAsked++;
+  
+  const q=questions[qIdx];
+  document.getElementById('q-tag').textContent=`АСУУЛТ ${totalAsked}`;
+  document.getElementById('question-text').textContent=q.q;
+  document.getElementById('feedback-bar').textContent='';
+  document.getElementById('feedback-bar').className='';
+  buildQProgress();
+
+  const grid=document.getElementById('choices');
+  grid.innerHTML='';
+  q.c.forEach((txt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='choice';
+    btn.innerHTML=`<span class="letter">${'ABCD'[i]}</span>${txt}`;
+    btn.onclick=()=>answerQ(i);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('quiz-inner').classList.add('open');
+  document.exitPointerLock();
+}
+
+function answerQ(idx){
+  if(answered) return;
+  answered=true;
+  asked.add(currentQ);
+  buildQProgress();
+
+  const q=questions[currentQ];
+  const btns=document.querySelectorAll('.choice');
+  btns.forEach(b=>{b.disabled=true; b.style.cursor='default';});
+
+  if(idx===q.a){
+    btns[idx].classList.add('correct');
+    const pts = 1000*combo;
+    score+=pts; correctCount++;
+    combo = Math.min(combo+1, 10);
+    maxCombo = Math.max(maxCombo, combo);
+    updateScore();
+    showFeedback(true, pts);
+    showCombo();
+    spawnScorePop(pts);
+    beep(true);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.a].classList.add('correct');
+    combo=1;
+    showFeedback(false);
+    document.getElementById('combo-badge').classList.remove('show');
+    beep(false);
+  }
+  document.getElementById('combo-num').textContent=`×${combo}`;
+  setTimeout(closeQuiz, 1800);
+}
+
+function showFeedback(ok, pts){
+  const el=document.getElementById('feedback-bar');
+  if(ok){
+    el.textContent=`✓ ЗӨВ ХАРИУЛТ! +${pts.toLocaleString()} ОН`;
+    el.className='correct';
+  } else {
+    el.textContent='✗ БУРУУ ХАРИУЛТ';
+    el.className='wrong';
+  }
+}
+
+function showCombo(){
+  if(combo<=1) return;
+  const el=document.getElementById('combo-badge');
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 1500);
+}
+
+function closeQuiz(){
+  document.getElementById('quiz-inner').classList.remove('open');
+  quizOpen=false;
+  if(asked.size>=questions.length) endGame();
+}
+
+function updateScore(){
+  document.getElementById('score-val').textContent=score.toLocaleString();
+}
+
+function spawnScorePop(pts){
+  const el=document.createElement('div');
+  el.className='spop';
+  el.textContent=`+${pts.toLocaleString()}`;
+  el.style.color=['#a78bfa','#60a5fa','#34d399','#fbbf24'][Math.floor(Math.random()*4)];
+  el.style.left=(30+Math.random()*40)+'%';
+  el.style.top='35%';
+  el.style.textShadow=`0 0 20px currentColor`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1400);
+}
+
+function beep(ok){
+  try{
+    const ctx=new(AudioContext||webkitAudioContext)();
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    if(ok){
+      o.type='sine';
+      o.frequency.setValueAtTime(440,ctx.currentTime);
+      o.frequency.setValueAtTime(660,ctx.currentTime+0.08);
+      o.frequency.setValueAtTime(880,ctx.currentTime+0.16);
+    } else {
+      o.type='sawtooth';
+      o.frequency.setValueAtTime(280,ctx.currentTime);
+      o.frequency.setValueAtTime(180,ctx.currentTime+0.12);
+    }
+    g.gain.setValueAtTime(0.25,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.35);
+    o.start(); o.stop(ctx.currentTime+0.35);
+  }catch(e){}
+}
+
+// =====================================================
+//  GAME STATE
+// =====================================================
+function startGame(){
+  document.getElementById('intro').classList.add('out');
+  setTimeout(()=>document.getElementById('intro').style.display='none',1000);
+  resetState();
+  gameActive=true; gameActive2=true;
+  timerInt=setInterval(tick,1000);
+}
+
+function resetState(){
+  score=0; timeLeft=60; combo=1; maxCombo=1;
+  correctCount=0; totalAsked=0; quizOpen=false; answered=false;
+  asked.clear();
+  updateScore();
+  document.getElementById('time-val').textContent='60';
+  document.getElementById('timer-fill').style.width='100%';
+  document.getElementById('timer-fill').style.background='linear-gradient(90deg,#7c3aed,#3b82f6,#10b981)';
+  document.getElementById('combo-num').textContent='×2';
+  document.getElementById('combo-badge').classList.remove('show');
+  player.position.set(0,0,0);
+  camYaw=0; camPitch=0.1;
+}
+
+function tick(){
+  timeLeft--;
+  document.getElementById('time-val').textContent=timeLeft;
+  document.getElementById('timer-fill').style.width=(timeLeft/60*100)+'%';
+  if(timeLeft<=15) document.getElementById('timer-fill').style.background='linear-gradient(90deg,#ef4444,#f97316)';
+  if(timeLeft<=0){ clearInterval(timerInt); endGame(); }
+}
+
+function endGame(){
+  gameActive=false; gameActive2=false;
+  document.getElementById('quiz-inner').classList.remove('open');
+  document.exitPointerLock();
+  document.getElementById('go-score').textContent=score.toLocaleString();
+  document.getElementById('go-correct').textContent=correctCount;
+  document.getElementById('go-combo').textContent='×'+maxCombo;
+  document.getElementById('go-total').textContent=totalAsked;
+  let msg='Сайн тоглолоо!';
+  if(score>10000) msg='🏆 Мастер зэрэглэл!';
+  else if(score>6000) msg='⭐ Маш гайхалтай!';
+  else if(score>3000) msg='👍 Дундаас дээгүүр!';
+  document.getElementById('go-msg').textContent=msg;
+  document.getElementById('gameover').classList.add('show');
+}
+
+function restartGame(){
+  clearInterval(timerInt);
+  document.getElementById('gameover').classList.remove('show');
+  resetState();
+  gameActive=true; gameActive2=true;
+  timerInt=setInterval(tick,1000);
+}
+
+// =====================================================
+//  ANIMATION
+// =====================================================
+const clock = new THREE.Clock();
+let walkPhase = 0;
+
+function animate(){
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  const t  = clock.getElapsedTime();
+
+  // ---- PLAYER MOVE ----
+  if(gameActive2){
+    const spd = 9*dt;
+    const fwd = new THREE.Vector3(-Math.sin(camYaw),0,-Math.cos(camYaw));
+    const rgt = new THREE.Vector3(Math.cos(camYaw),0,-Math.sin(camYaw));
+    let moving=false;
+    if(keys['w']||keys['arrowup'])   { player.position.addScaledVector(fwd, spd); moving=true; }
+    if(keys['s']||keys['arrowdown']) { player.position.addScaledVector(fwd,-spd); moving=true; }
+    if(keys['a']||keys['arrowleft']) { player.position.addScaledVector(rgt,-spd); moving=true; }
+    if(keys['d']||keys['arrowright']){ player.position.addScaledVector(rgt, spd); moving=true; }
+
+    player.position.x = Math.max(-28,Math.min(28,player.position.x));
+    player.position.z = Math.max(-28,Math.min(28,player.position.z));
+
+    if(moving) walkPhase+=dt*9;
+    player.position.y = Math.sin(walkPhase)*0.12;
+    player.rotation.y = camYaw;
+
+    // Arms swing
+    arms.forEach((arm,i)=>{
+      arm.rotation.z = arm.userData.baseZ + (moving ? Math.sin(walkPhase+(i?Math.PI:0))*0.35 : 0);
+    });
+
+    // Chest crystal pulse
+    chestCrystal.material.emissiveIntensity = 0.8 + Math.sin(t*3)*0.4;
+
+    // Camera
+    camera.position.set(player.position.x, player.position.y+1.85, player.position.z);
+    const dir = new THREE.Vector3(
+      -Math.sin(camYaw)*Math.cos(camPitch),
+      Math.sin(camPitch),
+      -Math.cos(camYaw)*Math.cos(camPitch)
+    );
+    camera.lookAt(camera.position.clone().add(dir));
+
+    // Cursor aim when near crystal
+    raycaster.setFromCamera({x:0,y:0},camera);
+    const aim = raycaster.intersectObjects(crystals,true).length>0;
+    document.getElementById('xhair').classList.toggle('pulse', aim);
+  }
+
+  // ---- CRYSTALS ANIMATE ----
+  crystals.forEach((c,i)=>{
+    c.rotation.y += 0.008;
+    c.rotation.x += 0.003;
+    c.position.y  = c.userData.baseY + Math.sin(t*1.1+i*0.8)*1.0;
+
+    // Rings orbit
+    c.userData.ring.rotation.z  += 0.012;
+    c.userData.ring2.rotation.y += 0.018;
+
+    // Glow near player
+    const dist = c.position.distanceTo(player.position);
+    const glow = dist<10 ? 0.4+(10-dist)/10*1.2 : 0.4;
+    c.userData.inner.material.emissiveIntensity = glow + Math.sin(t*2+i)*0.2;
+  });
+
+  // ---- PARTICLES ----
+  dust1.rotation.y += 0.0002;
+  dust2.rotation.y -= 0.0003;
+  dust3.rotation.x += 0.0001;
+
+  // Rising runes
+  const rp = runePoints.geometry.attributes.position.array;
+  for(let i=0;i<runeCount;i++){
+    rp[i*3+1] += runeVel[i];
+    if(rp[i*3+1]>15){ rp[i*3+1]=-15; }
+  }
+  runePoints.geometry.attributes.position.needsUpdate=true;
+
+  // ---- LIGHTS PULSE ----
+  sceneLights[0].intensity = 3+Math.sin(t*1.3)*0.8;
+  sceneLights[1].intensity = 2+Math.sin(t*1.7+1)*0.5;
+  sceneLights[2].intensity = 1.5+Math.sin(t*2.1+2)*0.4;
+
+  // ---- GRID SUBTLE MOVE ----
+  gridHelper.material.opacity = 0.15+Math.sin(t*0.5)*0.08;
+
+  renderer.render(scene,camera);
+}
+animate();
+
+// Resize
+window.addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+
+// Touch support
+let touchLast=null;
+renderer.domElement.addEventListener('touchstart', e=>{
+  if(e.target.closest('#quiz-inner,#intro,#gameover')) return;
+  touchLast={x:e.touches[0].clientX, y:e.touches[0].clientY};
+},{passive:true});
+renderer.domElement.addEventListener('touchmove', e=>{
+  if(!touchLast||!gameActive2) return;
+  camYaw  -= (e.touches[0].clientX-touchLast.x)*0.004;
+  camPitch-= (e.touches[0].clientY-touchLast.y)*0.003;
+  camPitch = Math.max(-0.55,Math.min(0.55,camPitch));
+  touchLast={x:e.touches[0].clientX,y:e.touches[0].clientY};
+},{passive:true});
+</script>
+</body>
+</html>
